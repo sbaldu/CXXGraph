@@ -205,11 +205,24 @@ class Graph {
   virtual const std::optional<const Edge<T> *> getEdge(
       const unsigned long long edgeId) const;
   /**
-   * @brief This function generate a list of adjacency matrix with every element
+   * @brief This function generates a list of adjacency matrix with every element
    * of the matrix contain the node where is directed the link and the Edge
    * corrispondent to the link Note: No Thread Safe
    */
   virtual const std::shared_ptr<AdjacencyMatrix<T>> getAdjMatrix() const;
+  /**
+   * @brief This function generates the degree matrix for the graph, i.e a 
+   * diagonal matrix whose elements are the degrees of the correspoding nodes
+   *
+   * Note: No Thread Safe
+   */
+  virtual const std::shared_ptr<std::unordered_map<const Node<T> *, int>> getDegreeMatrix() const;
+  /**
+   * @brief This function generates the transition matrix
+   *
+   * Note: No Thread Safe
+   */
+  virtual const std::shared_ptr<AdjacencyMatrix<T>> getTransitionMatrix() const;
   /**
    * @brief This function finds the subset of given a nodeId
    * Subset is stored in a map where keys are the hash-id of the node & values
@@ -1198,6 +1211,64 @@ const std::shared_ptr<AdjacencyMatrix<T>> Graph<T>::getAdjMatrix() const {
                             ud_edge);
       addElementToAdjMatrix(&(ud_edge->getNode2()), &(ud_edge->getNode1()),
                             ud_edge);
+    } else {  // is a simple edge we cannot create adj matrix
+      return adj;
+    }
+  }
+  return adj;
+}
+
+template <typename T>
+const std::shared_ptr<std::unordered_map<const Node<T> *, int>> Graph<T>::getDegreeMatrix() const {
+  auto deg = std::make_shared<std::unordered_map<const Node<T> *, int>>();
+
+  for (const auto& edgeIt : edgeSet) {
+	if (edgeIt->isDirected().has_value() && edgeIt->isDirected().value()) {
+	  const DirectedEdge<T> *d_edge = dynamic_cast<const DirectedEdge<T> *>(edgeIt);
+	  // out degree
+	  ++deg[d_edge->getFrom()];
+	} else {
+	  const UndirectedEdge<T> *u_edge = dynamic_cast<const UndirectedEdge<T> *>(edgeIt);
+	  ++deg[u_edge->getNode1()];
+	  ++deg[u_edge->getNode2()];
+	}
+  }
+
+  return deg;
+}
+
+template <typename T>
+const std::shared_ptr<AdjacencyMatrix<T>> Graph<T>::getTransitionMatrix() const {
+  auto tran = std::make_shared<AdjacencyMatrix<T>>();
+  auto deg = getDegreeMatrix();
+
+  for (const auto &edgeSetIt : edgeSet) {
+    if (edgeSetIt->isDirected().has_value() &&
+        edgeSetIt->isDirected().value()) {
+      const DirectedEdge<T> *d_edge =
+          dynamic_cast<const DirectedEdge<T> *>(edgeSetIt);
+	  auto nodeFrom = d_edge->getFrom();
+	  auto nodeTo = d_edge->getTo();
+	  double weight = 1/((*deg)[nodeFrom]);
+	  auto weightedEdge = new DirectedWeightedEdge<T>(d_edge->getId(), d_edge->getNodePair(), weight);
+
+	  std::pair<const Node<T> *, const Edge<T> *> elem = {nodeFrom, static_cast<const Edge<T> *>(weightedEdge)};
+	  (*tran)[nodeFrom].push_back(std::move(elem));
+    } else if (edgeSetIt->isDirected().has_value() &&
+               !edgeSetIt->isDirected().value()) {
+      const UndirectedEdge<T> *ud_edge =
+          dynamic_cast<const UndirectedEdge<T> *>(edgeSetIt);
+	  auto node1 = ud_edge->getNode1();
+	  auto node2 = ud_edge->getNode2();
+	  double weight1 = 1/((*deg)[node1]);
+	  double weight2 = 1/((*deg)[node2]);
+	  auto weightedEdge1 = new UndirectedWeightedEdge<T>(ud_edge->getId(), ud_edge->getNodePair().first, ud_edge->getNodePair().second, weight1);
+	  auto weightedEdge2 = new UndirectedWeightedEdge<T>(ud_edge->getId(), ud_edge->getNodePair().second, ud_edge->getNodePair().first, weight2);
+
+	  std::pair<const Node<T> *, const Edge<T> *> elem1 = {node2, static_cast<const Edge<T> *>(weightedEdge1)};
+	  (*tran)[node1].push_back(std::move(elem1));
+	  std::pair<const Node<T> *, const Edge<T> *> elem2 = {node1, static_cast<const Edge<T> *>(weightedEdge2)};
+	  (*tran)[node2].push_back(std::move(elem2));
     } else {  // is a simple edge we cannot create adj matrix
       return adj;
     }
