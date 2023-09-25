@@ -34,15 +34,15 @@ using shared= std::shared_ptr<T>;
 using std::make_unique;
 using std::make_shared;
 
-template <typename T>
+template <typename T, typename Data>
 class UndirectedEdge;
 
 // ostream operator
-template <typename T>
-std::ostream &operator<<(std::ostream &o, const UndirectedEdge<T> &edge);
+template <typename T, typename Data>
+std::ostream &operator<<(std::ostream &o, const UndirectedEdge<T, Data> &edge);
 
-template <typename T>
-class UndirectedEdge : public Edge<T> {
+template <typename T, typename Data>
+class UndirectedEdge : public Edge<T, Data> {
  public:
   UndirectedEdge(const unsigned long id, const Node<T> &node1,
                  const Node<T> &node2);
@@ -52,70 +52,70 @@ class UndirectedEdge : public Edge<T> {
                  const std::pair<const Node<T> *, const Node<T> *> &nodepair);
   UndirectedEdge(const unsigned long id,
                  const std::pair<shared<const Node<T>>, shared<const Node<T>>> &nodepair);
-  UndirectedEdge(const Edge<T> &edge);
+  UndirectedEdge(const Edge<T, Data> &edge);
   virtual ~UndirectedEdge() = default;
   const Node<T> &getNode1() const;
   const Node<T> &getNode2() const;
   const std::optional<bool> isDirected() const override;
   const std::optional<bool> isWeighted() const override;
   // operator
-  explicit operator DirectedEdge<T>() const {
-    return DirectedEdge<T>(Edge<T>::getId(), Edge<T>::getNodePair());
+  explicit operator DirectedEdge<T, Data>() const {
+    return DirectedEdge<T, Data>(Edge<T, Data>::getId(), Edge<T, Data>::getNodePair());
   }
 
   friend std::ostream &operator<< <>(std::ostream &os,
-                                     const UndirectedEdge<T> &edge);
+                                     const UndirectedEdge<T, Data> &edge);
 };
 
-template <typename T>
-UndirectedEdge<T>::UndirectedEdge(const unsigned long id, const Node<T> &node1,
+template <typename T, typename Data>
+UndirectedEdge<T, Data>::UndirectedEdge(const unsigned long id, const Node<T> &node1,
                                   const Node<T> &node2)
-    : Edge<T>(id, node1, node2) {}
+    : Edge<T, Data>(id, node1, node2) {}
 
-template <typename T>
-UndirectedEdge<T>::UndirectedEdge(const unsigned long id, shared<const Node<T>> node1,
+template <typename T, typename Data>
+UndirectedEdge<T, Data>::UndirectedEdge(const unsigned long id, shared<const Node<T>> node1,
                                   shared<const Node<T>> node2)
-    : Edge<T>(id, node1, node2) {}
+    : Edge<T, Data>(id, node1, node2) {}
 
-template <typename T>
-UndirectedEdge<T>::UndirectedEdge(
+template <typename T, typename Data>
+UndirectedEdge<T, Data>::UndirectedEdge(
     const unsigned long id,
     const std::pair<const Node<T> *, const Node<T> *> &nodepair)
-    : Edge<T>(id, nodepair) {}
+    : Edge<T, Data>(id, nodepair) {}
 
-template <typename T>
-UndirectedEdge<T>::UndirectedEdge(
+template <typename T, typename Data>
+UndirectedEdge<T, Data>::UndirectedEdge(
     const unsigned long id,
     const std::pair<shared<const Node<T>>, shared<const Node<T>>> &nodepair)
-    : Edge<T>(id, nodepair) {}
+    : Edge<T, Data>(id, nodepair) {}
 
-template <typename T>
-UndirectedEdge<T>::UndirectedEdge(const Edge<T> &edge)
+template <typename T, typename Data>
+UndirectedEdge<T, Data>::UndirectedEdge(const Edge<T, Data> &edge)
     : UndirectedEdge(edge.getId(), *(edge.getNodePair().first),
                      *(edge.getNodePair().second)) {}
 
-template <typename T>
-const Node<T> &UndirectedEdge<T>::getNode1() const {
-  return *(Edge<T>::getNodePair().first);
+template <typename T, typename Data>
+const Node<T> &UndirectedEdge<T, Data>::getNode1() const {
+  return *(Edge<T, Data>::getNodePair().first);
 }
 
-template <typename T>
-const Node<T> &UndirectedEdge<T>::getNode2() const {
-  return *(Edge<T>::getNodePair().second);
+template <typename T, typename Data>
+const Node<T> &UndirectedEdge<T, Data>::getNode2() const {
+  return *(Edge<T, Data>::getNodePair().second);
 }
 
-template <typename T>
-const std::optional<bool> UndirectedEdge<T>::isDirected() const {
+template <typename T, typename Data>
+const std::optional<bool> UndirectedEdge<T, Data>::isDirected() const {
   return false;
 }
 
-template <typename T>
-const std::optional<bool> UndirectedEdge<T>::isWeighted() const {
+template <typename T, typename Data>
+const std::optional<bool> UndirectedEdge<T, Data>::isWeighted() const {
   return false;
 }
 
-template <typename T>
-std::ostream &operator<<(std::ostream &os, const UndirectedEdge<T> &edge) {
+template <typename T, typename Data>
+std::ostream &operator<<(std::ostream &os, const UndirectedEdge<T, Data> &edge) {
   os << "((Node: " << edge.getNode1().getId() << ")) <----- |Edge: #"
      << edge.getId() << "|-----> ((Node: " << edge.getNode2().getId() << "))";
   return os;

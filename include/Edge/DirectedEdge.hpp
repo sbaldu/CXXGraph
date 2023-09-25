@@ -34,16 +34,16 @@ using shared= std::shared_ptr<T>;
 using std::make_unique;
 using std::make_shared;
 
-template <typename T>
+template <typename T, typename Data>
 class UndirectedEdge;
 
-template <typename T>
+template <typename T, typename Data>
 class DirectedEdge;
 // ostream operator
-template <typename T>
-std::ostream &operator<<(std::ostream &o, const DirectedEdge<T> &edge);
-template <typename T>
-class DirectedEdge : public Edge<T> {
+template <typename T, typename Data>
+std::ostream &operator<<(std::ostream &o, const DirectedEdge<T, Data> &edge);
+template <typename T, typename Data>
+class DirectedEdge : public Edge<T, Data> {
  public:
   DirectedEdge(const unsigned long id, const Node<T> &node1,
                const Node<T> &node2);
@@ -53,69 +53,98 @@ class DirectedEdge : public Edge<T> {
                const std::pair<const Node<T> *, const Node<T> *> &nodepair);
   DirectedEdge(const unsigned long id,
                const std::pair<shared<const Node<T>>, shared<const Node<T>>> &nodepair);
-  DirectedEdge(const Edge<T> &edge);
+  DirectedEdge(const unsigned long id, const Node<T> &node1,
+               const Node<T> &node2, Data data);
+  DirectedEdge(const unsigned long id, shared<const Node<T>> node1,
+               shared<const Node<T>> node2, Data data);
+  DirectedEdge(const unsigned long id,
+               const std::pair<const Node<T> *, const Node<T> *> &nodepair, Data data);
+  DirectedEdge(const unsigned long id,
+               const std::pair<shared<const Node<T>>, shared<const Node<T>>> &nodepair, Data data);
+  DirectedEdge(const Edge<T, Data> &edge);
   virtual ~DirectedEdge() = default;
   const Node<T> &getFrom() const;
   const Node<T> &getTo() const;
   const std::optional<bool> isDirected() const override;
   const std::optional<bool> isWeighted() const override;
   // operator
-  explicit operator UndirectedEdge<T>() const {
-    return UndirectedEdge<T>(Edge<T>::getId(), Edge<T>::getNodePair());
+  explicit operator UndirectedEdge<T, Data>() const {
+    return UndirectedEdge<T, Data>(Edge<T, Data>::getId(), Edge<T, Data>::getNodePair());
   }
 
   friend std::ostream &operator<< <>(std::ostream &os,
-                                     const DirectedEdge<T> &edge);
+                                     const DirectedEdge<T, Data> &edge);
 };
 
-template <typename T>
-DirectedEdge<T>::DirectedEdge(const unsigned long id, const Node<T> &node1,
+template <typename T, typename Data>
+DirectedEdge<T, Data>::DirectedEdge(const unsigned long id, const Node<T> &node1,
                               const Node<T> &node2)
-    : Edge<T>(id, node1, node2) {}
+    : Edge<T, Data>(id, node1, node2) {}
 
-template <typename T>
-DirectedEdge<T>::DirectedEdge(const unsigned long id, shared<const Node<T>> node1,
-			 shared<const Node<T>> node2) : Edge<T>(id, node1, node2) {}
+template <typename T, typename Data>
+DirectedEdge<T, Data>::DirectedEdge(const unsigned long id, shared<const Node<T>> node1,
+			 shared<const Node<T>> node2) : Edge<T, Data>(id, node1, node2) {}
 
-template <typename T>
-DirectedEdge<T>::DirectedEdge(
+template <typename T, typename Data>
+DirectedEdge<T, Data>::DirectedEdge(
     const unsigned long id,
     const std::pair<const Node<T> *, const Node<T> *> &nodepair)
-    : Edge<T>(id, nodepair) {}
+    : Edge<T, Data>(id, nodepair) {}
 
-template <typename T>
-DirectedEdge<T>::DirectedEdge(
+template <typename T, typename Data>
+DirectedEdge<T, Data>::DirectedEdge(
     const unsigned long id,
     const std::pair<shared<const Node<T>>, shared<const Node<T>>> &nodepair)
-    : Edge<T>(id, nodepair) {}
+    : Edge<T, Data>(id, nodepair) {}
 
-template <typename T>
-DirectedEdge<T>::DirectedEdge(const Edge<T> &edge)
+template <typename T, typename Data>
+DirectedEdge<T, Data>::DirectedEdge(const Edge<T, Data> &edge)
     : DirectedEdge(edge.getId(), *(edge.getNodePair().first),
                    *(edge.getNodePair().second)) {}
 
-template <typename T>
-const Node<T> &DirectedEdge<T>::getFrom() const {
-  return *(Edge<T>::getNodePair().first);
+template <typename T, typename Data>
+DirectedEdge<T, Data>::DirectedEdge(const unsigned long id, const Node<T> &node1,
+                              const Node<T> &node2, Data data)
+    : Edge<T, Data>(id, node1, node2, data) {}
+
+template <typename T, typename Data>
+DirectedEdge<T, Data>::DirectedEdge(const unsigned long id, shared<const Node<T>> node1,
+			 shared<const Node<T>> node2, Data data) : Edge<T, Data>(id, node1, node2, data) {}
+
+template <typename T, typename Data>
+DirectedEdge<T, Data>::DirectedEdge(
+    const unsigned long id,
+    const std::pair<const Node<T> *, const Node<T> *> &nodepair, Data data)
+    : Edge<T, Data>(id, nodepair, data) {}
+
+template <typename T, typename Data>
+DirectedEdge<T, Data>::DirectedEdge(
+    const unsigned long id,
+    const std::pair<shared<const Node<T>>, shared<const Node<T>>> &nodepair, Data data)
+    : Edge<T, Data>(id, nodepair, data) {}
+
+template <typename T, typename Data>
+const Node<T> &DirectedEdge<T, Data>::getFrom() const {
+  return *(Edge<T, Data>::getNodePair().first);
 }
 
-template <typename T>
-const Node<T> &DirectedEdge<T>::getTo() const {
-  return *(Edge<T>::getNodePair().second);
+template <typename T, typename Data>
+const Node<T> &DirectedEdge<T, Data>::getTo() const {
+  return *(Edge<T, Data>::getNodePair().second);
 }
 
-template <typename T>
-const std::optional<bool> DirectedEdge<T>::isDirected() const {
+template <typename T, typename Data>
+const std::optional<bool> DirectedEdge<T, Data>::isDirected() const {
   return true;
 }
 
-template <typename T>
-const std::optional<bool> DirectedEdge<T>::isWeighted() const {
+template <typename T, typename Data>
+const std::optional<bool> DirectedEdge<T, Data>::isWeighted() const {
   return false;
 }
 
-template <typename T>
-std::ostream &operator<<(std::ostream &os, const DirectedEdge<T> &edge) {
+template <typename T, typename Data>
+std::ostream &operator<<(std::ostream &os, const DirectedEdge<T, Data> &edge) {
   os << "((Node: " << edge.getFrom().getId() << ")) +----- |Edge: #"
      << edge.getId() << "|-----> ((Node: " << edge.getTo().getId() << "))";
   return os;
