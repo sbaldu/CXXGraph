@@ -38,35 +38,30 @@ template <typename T>
 using shared = std::shared_ptr<T>;
 
 // Redefine the hash functions and equality operators for shared pointers of nodes and edges
-template <typename T>
 struct nodeHash {
-  size_t operator()(const shared<const Node<T>>& node) const {
+  size_t operator()(const shared<const Node>& node) const {
     return node->getId();
   }
-  size_t operator()(const shared<Node<T>>& node) const {
+  size_t operator()(const shared<Node>& node) const {
     return node->getId();
   }
 };
 
-template <typename T>
 struct edgeHash {
-  size_t operator()(const shared<const Edge<T>>& edge) const {
+  size_t operator()(const shared<const Edge>& edge) const {
     return (edge->getNodePair().first->getId()) ^ (edge->getNodePair().second->getId());
   }
 };
 
-template <typename T>
-bool operator==(shared<const Node<T>> p1, shared<const Node<T>> p2) {
+bool operator==(shared<const Node> p1, shared<const Node> p2) {
   return p1->getUserId() == p2->getUserId();
 }
 
-template <typename T>
-bool operator==(shared<Node<T>> p1, shared<Node<T>> p2) {
+bool operator==(shared<Node> p1, shared<Node> p2) {
   return p1->getUserId() == p2->getUserId();
 }
 
-template <typename T>
-bool operator==(shared<const Edge<T>> p1, shared<const Edge<T>> p2) {
+bool operator==(shared<const Edge> p1, shared<const Edge> p2) {
   return p1->getNodePair().first->getUserId() ==
              p2->getNodePair().first->getUserId() &&
          p1->getNodePair().second->getUserId() ==

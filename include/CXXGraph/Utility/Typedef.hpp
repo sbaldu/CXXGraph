@@ -43,14 +43,11 @@ using shared = std::shared_ptr<T>;
 using std::make_shared;
 using std::make_unique;
 
-template <typename T>
 class Node;
 
-template <typename T>
 class Edge;
 
 namespace Partitioning {
-template <typename T>
 class Partition;
 }
 // ENUMERATION //////////////////////////////////////
@@ -170,7 +167,7 @@ struct TopoSortResult_struct {
   bool success =
       false;  // TRUE if the function does not return error, FALSE otherwise
   std::string errorMessage = "";  // message of error
-  std::vector<Node<T>> nodesInTopoOrder =
+  std::vector<Node> nodesInTopoOrder =
       {};  // result a vector that contains the nodes in topological order
            // (valid only if success is TRUE)
 
@@ -188,7 +185,7 @@ using TopoSortResult = TopoSortResult_struct<T>;
 // typedef for a collection of sets of vertices (useful for connected components
 // algorithms)
 template <typename T>
-using Components = std::vector<std::vector<Node<T>>>;
+using Components = std::vector<std::vector<Node>>;
 
 /// Struct that contains the information about strongly connected components
 /// (SCC) algorithms results
@@ -221,10 +218,10 @@ struct TarjanResult_struct {
       edgeBiconnectedComps;  // vectors that store nodes belong to same e-bcc
                              // (valid only if a graph is undirected and flag
                              // TARJAN_FIND_EBCC is set)
-  std::vector<Node<T>> cutVertices;  // a vector that stores cut vertices
+  std::vector<Node> cutVertices;  // a vector that stores cut vertices
                                      // (valid only is a graph is undirected and
                                      // flag TARJAN_FIND_CUTV is set)
-  std::vector<Edge<T>> bridges;  // a vector that stores bridges
+  std::vector<Edge> bridges;  // a vector that stores bridges
                                  // (valid only is a graph is undirected and
                                  // flag TRAJAN_FIND_BRIDGES is set)
 };
@@ -237,7 +234,7 @@ template <typename T>
 struct BestFirstSearchResult_struct {
   bool success = false;
   std::string errorMessage = "";
-  std::vector<Node<T>> nodesInBestSearchOrder = {};
+  std::vector<Node> nodesInBestSearchOrder = {};
 };
 template <typename T>
 using BestFirstSearchResult = BestFirstSearchResult_struct<T>;
@@ -248,16 +245,14 @@ using BestFirstSearchResult = BestFirstSearchResult_struct<T>;
 // Using Definition
 // ///////////////////////////////////////////////////////////////
 
-template <typename T>
 using AdjacencyMatrix = std::unordered_map<
-    shared<const Node<T>>,
-    std::vector<std::pair<shared<const Node<T>>, shared<const Edge<T>>>>,
+    shared<const Node>,
+    std::vector<std::pair<shared<const Node>, shared<const Edge>>>,
     nodeHash<T>>;
 
-template <typename T>
 using PartitionMap =
     std::unordered_map<unsigned int,
-                       std::shared_ptr<Partitioning::Partition<T>>>;
+                       std::shared_ptr<Partitioning::Partition>>;
 
 ///////////////////////////////////////////////////////////////////////////////////
 }  // namespace CXXGraph

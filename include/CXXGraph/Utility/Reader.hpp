@@ -26,7 +26,6 @@ namespace CXXGraph {
 /*!
     Interface to implement for a custom reader.
     */
-template <typename T>
 class Reader {
   /**
    * \brief
@@ -38,7 +37,7 @@ class Reader {
    * else 0 if the graph is read successfully.
    *
    */
-  virtual int ReadGraph(Graph<T> &graph, std::ifstream &file) = 0;
+  virtual int ReadGraph(Graph &graph, std::ifstream &file) = 0;
 };
 }  // namespace CXXGraph
 

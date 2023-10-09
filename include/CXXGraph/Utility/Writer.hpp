@@ -24,14 +24,12 @@
 
 namespace CXXGraph {
 
-template <typename T>
 class Graph;
 
 /*!
     Interface to implement for a custom writer.
     */
 
-template <typename T>
 class Writer {
  public:
   /**
@@ -44,7 +42,7 @@ class Writer {
    * file, else 0 if the graph is write successfully.
    *
    */
-  virtual int writeGraph(const Graph<T> &graph, std::ofstream &file) = 0;
+  virtual int writeGraph(const Graph &graph, std::ofstream &file) = 0;
 };
 }  // namespace CXXGraph
 

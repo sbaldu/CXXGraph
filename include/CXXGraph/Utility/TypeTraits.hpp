@@ -38,18 +38,18 @@ namespace CXXGraph {
 template <typename T>
 struct is_node : std::false_type {};
 
-template <typename T>
-struct is_node<Node<T>> : std::true_type {};
+template <>
+struct is_node<Node> : std::true_type {};
 
 // define is_node_ptr type trait for Node pointers and shared pointers
 template <typename T>
 struct is_node_ptr : std::false_type {};
 
-template <typename T>
-struct is_node_ptr<const Node<T>*> : std::true_type {};
+template <>
+struct is_node_ptr<const Node*> : std::true_type {};
 
-template <typename T>
-struct is_node_ptr<shared<const Node<T>>> : std::true_type {};
+template <>
+struct is_node_ptr<shared<const Node>> : std::true_type {};
 
 template <typename T>
 inline constexpr bool is_node_ptr_v = is_node<T>::value;
@@ -58,18 +58,18 @@ inline constexpr bool is_node_ptr_v = is_node<T>::value;
 template <typename T>
 struct is_edge : std::false_type {};
 
-template <typename T>
-struct is_edge<Edge<T>> : std::true_type {};
+template <>
+struct is_edge<Edge> : std::true_type {};
 
 // define is_edge_ptr type trait for Edge pointers and shared pointers
 template <typename T>
 struct is_edge_ptr : std::false_type {};
 
-template <typename T>
-struct is_edge_ptr<const Edge<T>*> : std::true_type {};
+template <>
+struct is_edge_ptr<const Edge*> : std::true_type {};
 
-template <typename T>
-struct is_edge_ptr<shared<const Edge<T>>> : std::true_type {};
+template <>
+struct is_edge_ptr<shared<const Edge>> : std::true_type {};
 
 template <typename T>
 inline constexpr bool is_edge_ptr_v = is_edge<T>::value;
