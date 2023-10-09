@@ -28,51 +28,33 @@
 #include <iostream>
 
 namespace CXXGraph {
-template <typename T>
 class Node;
-template <typename T>
-std::ostream &operator<<(std::ostream &os, const Node<T> &node);
-template <typename T>
+std::ostream &operator<<(std::ostream &os, const Node &node);
+
 class Node {
  private:
   CXXGraph::id_t id = 0;
   std::string userId = "";
-  T data;
   void setId(const std::string &);
 
  public:
-  Node(const std::string &, const T& data);
-  // Move constructor
-  Node(const std::string &, T&& data) noexcept;
+  Node(const std::string &);
   ~Node() = default;
   const CXXGraph::id_t &getId() const;
   const std::string &getUserId() const;
-  const T &getData() const;
-  void setData(T&& new_data);
   // operator
-  bool operator==(const Node<T> &b) const;
-  bool operator<(const Node<T> &b) const;
-  friend std::ostream &operator<< <>(std::ostream &os, const Node<T> &node);
+  bool operator==(const Node &b) const;
+  bool operator<(const Node &b) const;
+  friend std::ostream &operator<<(std::ostream &os, const Node &node);
 };
 
-template <typename T>
-Node<T>::Node(const std::string& id, const T& data) {
+Node::Node(const std::string& id) {
   this->userId = id;
   // the userid is set as sha512 hash of the user provided id
   setId(id);
-  this->data = data;
 }
 
-template <typename T>
-Node<T>::Node(const std::string& id, T&& data) noexcept {
-  this->userId = id;
-  // the userid is set as sha512 hash of the user provided id
-  setId(id);
-  this->data = std::move(data);
-}
-
-template <typename T>
-void Node<T>::setId(const std::string &inpId) {
+void Node::setId(const std::string &inpId) {
   // const unsigned char* userId = reinterpret_cast<const unsigned char
   // *>((*inpId).c_str() ); unsigned char obuf[64]; unsigned long long obuf[8];
   // SHA512(userId, (*inpId).length(), reinterpret_cast<unsigned char*>(obuf));
@@ -97,43 +79,28 @@ void Node<T>::setId(const std::string &inpId) {
   this->id = std::hash<std::string>{}(inpId);
 }
 
-template <typename T>
-const CXXGraph::id_t &Node<T>::getId() const {
+const CXXGraph::id_t &Node::getId() const {
   return id;
 }
 
-template <typename T>
-const std::string &Node<T>::getUserId() const {
+const std::string &Node::getUserId() const {
   return userId;
 }
 
-template <typename T>
-const T &Node<T>::getData() const {
-  return data;
-}
-
-template <typename T>
-void Node<T>::setData(T&& new_data) {
-  this->data = std::move(new_data);
-}
-
 // The data type T must have an overload of the equality operator
-template <typename T>
-bool Node<T>::operator==(const Node<T> &b) const {
-  return (this->id == b.id && this->data == b.data);
+bool Node::operator==(const Node &b) const {
+  return this->id == b.id;
 }
 
-template <typename T>
-bool Node<T>::operator<(const Node<T> &b) const {
-  return (this->id < b.id);
+bool Node::operator<(const Node &b) const {
+  return this->id < b.id;
 }
 
 // ostream overload
 // The data type T must have an overload of the ostream operator
-template <typename T>
-std::ostream &operator<<(std::ostream &os, const Node<T> &node) {
+std::ostream &operator<<(std::ostream &os, const Node &node) {
   os << "Node: {\n"
-     << "  Id:\t" << node.userId << "\n  Data:\t" << node.data << "\n}";
+     << "  Id:\t" << node.userId << "\n}";
   return os;
 }
 }  // namespace CXXGraph
