@@ -27,6 +27,7 @@
 #include <utility>
 
 #include "CXXGraph/Node/Node.hpp"
+#include "CXXGraph/Node/DataNode.hpp"
 #include "CXXGraph/Utility/id_t.hpp"
 
 namespace CXXGraph {
@@ -39,97 +40,85 @@ using shared = std::shared_ptr<T>;
 using std::make_unique;
 using std::make_shared;
 
-template <typename T>
 class Edge;
 // ostream operator
-template <typename T>
-std::ostream &operator<<(std::ostream &o, const Edge<T> &edge);
-template <typename T>
+std::ostream &operator<<(std::ostream &o, const Edge &edge);
 class Edge {
  private:
   CXXGraph::id_t id = 0;
-  std::pair<shared<const Node<T>>, shared<const Node<T>>> nodePair;
+  std::pair<shared<const Node>, shared<const Node>> nodePair;
 
  public:
-  Edge(const CXXGraph::id_t id, const Node<T> &node1, const Node<T> &node2);
-  Edge(const CXXGraph::id_t id, shared<const Node<T>> node1, shared<const Node<T>> node2);
+  Edge(const CXXGraph::id_t id, const Node &node1, const Node &node2);
+  Edge(const CXXGraph::id_t id, shared<const Node> node1, shared<const Node> node2);
   Edge(const CXXGraph::id_t id,
-       const std::pair<const Node<T> *, const Node<T> *> &nodepair);
+       const std::pair<const Node *, const Node *> &nodepair);
   Edge(const CXXGraph::id_t id,
-       const std::pair<shared<const Node<T>>, shared<const Node<T>>> &nodepair);
+       const std::pair<shared<const Node>, shared<const Node>> &nodepair);
   virtual ~Edge() = default;
-  void setFirstNode(shared<const Node<T>> node);
-  void setSecondNode(shared<const Node<T>> node);
+  void setFirstNode(shared<const Node> node);
+  void setSecondNode(shared<const Node> node);
   const unsigned long long getId() const;
-  const std::pair<shared<const Node<T>>, shared<const Node<T>>> &getNodePair() const;
-  shared<const Node<T>> getOtherNode(shared<const Node<T>> node) const;
+  const std::pair<shared<const Node>, shared<const Node>> &getNodePair() const;
+  shared<const Node> getOtherNode(shared<const Node> node) const;
   virtual const std::optional<bool> isDirected() const;
   virtual const std::optional<bool> isWeighted() const;
   // operator
-  virtual bool operator==(const Edge<T> &b) const;
-  bool operator<(const Edge<T> &b) const;
-  // operator DirectedEdge<T>() const { return DirectedEdge<T>(id, nodePair); }
-  // operator UndirectedEdge<T>() const { return UndirectedEdge<T>(id,
+  virtual bool operator==(const Edge &b) const;
+  bool operator<(const Edge &b) const;
+  // operator DirectedEdge() const { return DirectedEdge(id, nodePair); }
+  // operator UndirectedEdge() const { return UndirectedEdge(id,
   // nodePair); }
 
-  friend std::ostream &operator<< <>(std::ostream &os, const Edge<T> &edge);
+  friend std::ostream &operator<<(std::ostream &os, const Edge &edge);
 };
 
-template <typename T>
-Edge<T>::Edge(const CXXGraph::id_t id, const Node<T> &node1,
-              const Node<T> &node2) {
-  this->nodePair.first = make_shared<const Node<T>>(node1);
-  this->nodePair.second = make_shared<const Node<T>>(node2);
+Edge::Edge(const CXXGraph::id_t id, const Node &node1,
+              const Node &node2) {
+  this->nodePair.first = make_shared<const Node>(node1);
+  this->nodePair.second = make_shared<const Node>(node2);
   this->id = id;
 }
 
-template <typename T>
-Edge<T>::Edge(const CXXGraph::id_t id, shared<const Node<T>> node1, shared<const Node<T>> node2) {
+Edge::Edge(const CXXGraph::id_t id, shared<const Node> node1, shared<const Node> node2) {
   this->nodePair.first = node1;
   this->nodePair.second = node2;
   this->id = id;
 }
 
-template <typename T>
-Edge<T>::Edge(const CXXGraph::id_t id,
-              const std::pair<const Node<T> *, const Node<T> *> &nodepair) {
-  this->nodePair.first = make_shared<const Node<T>>(*(nodepair.first));
-  this->nodePair.second = make_shared<const Node<T>>(*(nodepair.second));
+Edge::Edge(const CXXGraph::id_t id,
+              const std::pair<const Node *, const Node *> &nodepair) {
+  this->nodePair.first = make_shared<const Node>(*(nodepair.first));
+  this->nodePair.second = make_shared<const Node>(*(nodepair.second));
   this->id = id;
 }
 
-template <typename T>
-Edge<T>::Edge(const CXXGraph::id_t id,
-              const std::pair<shared<const Node<T>>, shared<const Node<T>>> &nodepair)
+Edge::Edge(const CXXGraph::id_t id,
+              const std::pair<shared<const Node>, shared<const Node>> &nodepair)
     : nodePair(nodepair) {
   this->id = id;
 }
 
-template <typename T>
-void Edge<T>::setFirstNode(shared<const Node<T>> node) {
+void Edge::setFirstNode(shared<const Node> node) {
   /* this->nodePair = std::make_pair(node, this->nodePair.second); */
   this->nodePair.first = node;
 }
 
-template <typename T>
-void Edge<T>::setSecondNode(shared<const Node<T>> node) {
+void Edge::setSecondNode(shared<const Node> node) {
   /* this->nodePair = std::make_pair(this->nodePair.first, node); */
   this->nodePair.second = node;
 }
 
-template <typename T>
-const unsigned long long Edge<T>::getId() const {
+const unsigned long long Edge::getId() const {
   return id;
 }
 
-template <typename T>
-const std::pair<shared<const Node<T>>, shared<const Node<T>>> &Edge<T>::getNodePair()
+const std::pair<shared<const Node>, shared<const Node>> &Edge::getNodePair()
     const {
   return nodePair;
 }
 
-template <typename T>
-shared<const Node<T>> Edge<T>::getOtherNode(shared<const Node<T>> node) const {
+shared<const Node> Edge::getOtherNode(shared<const Node> node) const {
   if (this->getNodePair().first == node) {
     return this->getNodePair().second;
   } else {
@@ -137,28 +126,23 @@ shared<const Node<T>> Edge<T>::getOtherNode(shared<const Node<T>> node) const {
   }
 }
 
-template <typename T>
-const std::optional<bool> Edge<T>::isDirected() const {
+const std::optional<bool> Edge::isDirected() const {
   return std::nullopt;
 }
 
-template <typename T>
-const std::optional<bool> Edge<T>::isWeighted() const {
+const std::optional<bool> Edge::isWeighted() const {
   return std::nullopt;
 }
 
-template <typename T>
-bool Edge<T>::operator==(const Edge<T> &b) const {
+bool Edge::operator==(const Edge &b) const {
   return (this->id == b.id && this->nodePair == b.nodePair);
 }
 
-template <typename T>
-bool Edge<T>::operator<(const Edge<T> &b) const {
+bool Edge::operator<(const Edge &b) const {
   return (this->id < b.id);
 }
 
-template <typename T>
-std::ostream &operator<<(std::ostream &os, const Edge<T> &edge) {
+std::ostream &operator<<(std::ostream &os, const Edge &edge) {
   os << "((Node: " << edge.nodePair.first->getId()
      << ")) ?----- |Edge: " << edge.id
      << "|-----? ((Node: " << edge.nodePair.second->getId() << "))";

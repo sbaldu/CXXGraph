@@ -29,113 +29,93 @@ namespace CXXGraph {
 template <typename T>
 using unique = std::unique_ptr<T>;
 template <typename T>
-using shared= std::shared_ptr<T>;
+using shared = std::shared_ptr<T>;
 
-using std::make_unique;
 using std::make_shared;
+using std::make_unique;
 
 // Foward Declaration
-template <typename T>
 class UndirectedWeightedEdge;
 
-template <typename T>
 class DirectedWeightedEdge;
 
 // ostream operator
-template <typename T>
-std::ostream &operator<<(std::ostream &o, const DirectedWeightedEdge<T> &edge);
+std::ostream &operator<<(std::ostream &o, const DirectedWeightedEdge &edge);
 
-template <typename T>
-class DirectedWeightedEdge : public DirectedEdge<T>, public Weighted {
+class DirectedWeightedEdge : public DirectedEdge, public Weighted {
  public:
-  DirectedWeightedEdge(const CXXGraph::id_t id, const Node<T> &node1,
-                       const Node<T> &node2, const double weight);
-  DirectedWeightedEdge(const CXXGraph::id_t id, shared<const Node<T>> node1,
-                       shared<const Node<T>> node2, const double weight);
+  DirectedWeightedEdge(const CXXGraph::id_t id, const Node &node1,
+                       const Node &node2, const double weight);
+  DirectedWeightedEdge(const CXXGraph::id_t id, shared<const Node> node1,
+                       shared<const Node> node2, const double weight);
+  DirectedWeightedEdge(const CXXGraph::id_t id,
+                       const std::pair<const Node *, const Node *> &nodepair,
+                       const double weight);
   DirectedWeightedEdge(
       const CXXGraph::id_t id,
-      const std::pair<const Node<T> *, const Node<T> *> &nodepair,
+      const std::pair<shared<const Node>, shared<const Node>> &nodepair,
       const double weight);
-  DirectedWeightedEdge(
-      const CXXGraph::id_t id,
-      const std::pair<shared<const Node<T>>, shared<const Node<T>>> &nodepair,
-      const double weight);
-  DirectedWeightedEdge(const DirectedEdge<T> &edge, const double weight);
-  DirectedWeightedEdge(const Edge<T> &edge, const double weight);
-  DirectedWeightedEdge(const DirectedEdge<T> &edge);
-  DirectedWeightedEdge(const Edge<T> &edge);
-  DirectedWeightedEdge(const UndirectedWeightedEdge<T> &edge);
+  DirectedWeightedEdge(const DirectedEdge &edge, const double weight);
+  DirectedWeightedEdge(const Edge &edge, const double weight);
+  DirectedWeightedEdge(const DirectedEdge &edge);
+  DirectedWeightedEdge(const Edge &edge);
+  DirectedWeightedEdge(const UndirectedWeightedEdge &edge);
   virtual ~DirectedWeightedEdge() = default;
   const std::optional<bool> isWeighted() const override;
   // operator
-  explicit operator UndirectedWeightedEdge<T>() const {
-    return UndirectedWeightedEdge<T>(Edge<T>::getId(), Edge<T>::getNodePair(),
-                                     Weighted::getWeight());
+  explicit operator UndirectedWeightedEdge() const {
+    return UndirectedWeightedEdge(Edge::getId(), Edge::getNodePair(),
+                                  Weighted::getWeight());
   }
 
-  friend std::ostream &operator<< <>(std::ostream &os,
-                                     const DirectedWeightedEdge<T> &edge);
+  friend std::ostream &operator<<(std::ostream &os,
+                                  const DirectedWeightedEdge &edge);
 };
 
-template <typename T>
-DirectedWeightedEdge<T>::DirectedWeightedEdge(const CXXGraph::id_t id,
-                                              const Node<T> &node1,
-                                              const Node<T> &node2,
-                                              const double weight)
-    : DirectedEdge<T>(id, node1, node2), Weighted(weight) {}
+DirectedWeightedEdge::DirectedWeightedEdge(const CXXGraph::id_t id,
+                                           const Node &node1, const Node &node2,
+                                           const double weight)
+    : DirectedEdge(id, node1, node2), Weighted(weight) {}
 
-template <typename T>
-DirectedWeightedEdge<T>::DirectedWeightedEdge(const CXXGraph::id_t id,
-                                              shared<const Node<T>> node1,
-                                              shared<const Node<T>> node2,
-                                              const double weight)
-    : DirectedEdge<T>(id, node1, node2), Weighted(weight) {}
+DirectedWeightedEdge::DirectedWeightedEdge(const CXXGraph::id_t id,
+                                           shared<const Node> node1,
+                                           shared<const Node> node2,
+                                           const double weight)
+    : DirectedEdge(id, node1, node2), Weighted(weight) {}
 
-template <typename T>
-DirectedWeightedEdge<T>::DirectedWeightedEdge(
+DirectedWeightedEdge::DirectedWeightedEdge(
     const CXXGraph::id_t id,
-    const std::pair<const Node<T> *, const Node<T> *> &nodepair,
-    const double weight)
-    : DirectedEdge<T>(id, nodepair), Weighted(weight) {}
+    const std::pair<const Node *, const Node *> &nodepair, const double weight)
+    : DirectedEdge(id, nodepair), Weighted(weight) {}
 
-template <typename T>
-DirectedWeightedEdge<T>::DirectedWeightedEdge(
+DirectedWeightedEdge::DirectedWeightedEdge(
     const CXXGraph::id_t id,
-    const std::pair<shared<const Node<T>>, shared<const Node<T>>> &nodepair,
+    const std::pair<shared<const Node>, shared<const Node>> &nodepair,
     const double weight)
-    : DirectedEdge<T>(id, nodepair), Weighted(weight) {}
+    : DirectedEdge(id, nodepair), Weighted(weight) {}
 
-template <typename T>
-DirectedWeightedEdge<T>::DirectedWeightedEdge(const DirectedEdge<T> &edge,
-                                              const double weight)
-    : DirectedEdge<T>(edge), Weighted(weight) {}
+DirectedWeightedEdge::DirectedWeightedEdge(const DirectedEdge &edge,
+                                           const double weight)
+    : DirectedEdge(edge), Weighted(weight) {}
 
-template <typename T>
-DirectedWeightedEdge<T>::DirectedWeightedEdge(const Edge<T> &edge,
-                                              const double weight)
-    : DirectedEdge<T>(edge), Weighted(weight) {}
+DirectedWeightedEdge::DirectedWeightedEdge(const Edge &edge,
+                                           const double weight)
+    : DirectedEdge(edge), Weighted(weight) {}
 
-template <typename T>
-DirectedWeightedEdge<T>::DirectedWeightedEdge(const DirectedEdge<T> &edge)
-    : DirectedEdge<T>(edge), Weighted() {}
+DirectedWeightedEdge::DirectedWeightedEdge(const DirectedEdge &edge)
+    : DirectedEdge(edge), Weighted() {}
 
-template <typename T>
-DirectedWeightedEdge<T>::DirectedWeightedEdge(const Edge<T> &edge)
-    : DirectedEdge<T>(edge), Weighted() {}
+DirectedWeightedEdge::DirectedWeightedEdge(const Edge &edge)
+    : DirectedEdge(edge), Weighted() {}
 
-template <typename T>
-DirectedWeightedEdge<T>::DirectedWeightedEdge(
-    const UndirectedWeightedEdge<T> &edge)
-    : DirectedEdge<T>(edge), Weighted(edge.getWeight()) {}
+DirectedWeightedEdge::DirectedWeightedEdge(const UndirectedWeightedEdge &edge)
+    : DirectedEdge(edge), Weighted(edge.getWeight()) {}
 
-template <typename T>
-const std::optional<bool> DirectedWeightedEdge<T>::isWeighted() const {
+const std::optional<bool> DirectedWeightedEdge::isWeighted() const {
   return true;
 }
 
-template <typename T>
-std::ostream &operator<<(std::ostream &os,
-                         const DirectedWeightedEdge<T> &edge) {
+std::ostream &operator<<(std::ostream &os, const DirectedWeightedEdge &edge) {
   os << "((Node: " << edge.getFrom().getId() << ")) +----- |Edge: #"
      << edge.getId() << " W:" << edge.getWeight()
      << "|-----> ((Node: " << edge.getTo().getId() << "))";

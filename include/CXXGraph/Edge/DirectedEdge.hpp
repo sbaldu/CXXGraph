@@ -29,93 +29,75 @@ namespace CXXGraph {
 template <typename T>
 using unique = std::unique_ptr<T>;
 template <typename T>
-using shared= std::shared_ptr<T>;
+using shared = std::shared_ptr<T>;
 
-using std::make_unique;
 using std::make_shared;
+using std::make_unique;
 
-template <typename T>
 class UndirectedEdge;
 
-template <typename T>
 class DirectedEdge;
 // ostream operator
-template <typename T>
-std::ostream &operator<<(std::ostream &o, const DirectedEdge<T> &edge);
-template <typename T>
-class DirectedEdge : public Edge<T> {
+std::ostream &operator<<(std::ostream &o, const DirectedEdge &edge);
+class DirectedEdge : public Edge {
  public:
-  DirectedEdge(const CXXGraph::id_t id, const Node<T> &node1,
-               const Node<T> &node2);
-  DirectedEdge(const CXXGraph::id_t id, shared<const Node<T>> node1,
-               shared<const Node<T>> node2);
+  DirectedEdge(const CXXGraph::id_t id, const Node &node1, const Node &node2);
+  DirectedEdge(const CXXGraph::id_t id, shared<const Node> node1,
+               shared<const Node> node2);
   DirectedEdge(const CXXGraph::id_t id,
-               const std::pair<const Node<T> *, const Node<T> *> &nodepair);
-  DirectedEdge(const CXXGraph::id_t id,
-               const std::pair<shared<const Node<T>>, shared<const Node<T>>> &nodepair);
-  DirectedEdge(const Edge<T> &edge);
+               const std::pair<const Node *, const Node *> &nodepair);
+  DirectedEdge(
+      const CXXGraph::id_t id,
+      const std::pair<shared<const Node>, shared<const Node>> &nodepair);
+  DirectedEdge(const Edge &edge);
   virtual ~DirectedEdge() = default;
-  const Node<T> &getFrom() const;
-  const Node<T> &getTo() const;
+  const Node &getFrom() const;
+  const Node &getTo() const;
   const std::optional<bool> isDirected() const override;
   const std::optional<bool> isWeighted() const override;
   // operator
-  explicit operator UndirectedEdge<T>() const {
-    return UndirectedEdge<T>(Edge<T>::getId(), Edge<T>::getNodePair());
+  explicit operator UndirectedEdge() const {
+    return UndirectedEdge(Edge::getId(), Edge::getNodePair());
   }
 
-  friend std::ostream &operator<< <>(std::ostream &os,
-                                     const DirectedEdge<T> &edge);
+  friend std::ostream &operator<<(std::ostream &os, const DirectedEdge &edge);
 };
 
-template <typename T>
-DirectedEdge<T>::DirectedEdge(const CXXGraph::id_t id, const Node<T> &node1,
-                              const Node<T> &node2)
-    : Edge<T>(id, node1, node2) {}
+DirectedEdge::DirectedEdge(const CXXGraph::id_t id, const Node &node1,
+                           const Node &node2)
+    : Edge(id, node1, node2) {}
 
-template <typename T>
-DirectedEdge<T>::DirectedEdge(const CXXGraph::id_t id, shared<const Node<T>> node1,
-			 shared<const Node<T>> node2) : Edge<T>(id, node1, node2) {}
+DirectedEdge::DirectedEdge(const CXXGraph::id_t id, shared<const Node> node1,
+                           shared<const Node> node2)
+    : Edge(id, node1, node2) {}
 
-template <typename T>
-DirectedEdge<T>::DirectedEdge(
+DirectedEdge::DirectedEdge(
     const CXXGraph::id_t id,
-    const std::pair<const Node<T> *, const Node<T> *> &nodepair)
-    : Edge<T>(id, nodepair) {}
+    const std::pair<const Node *, const Node *> &nodepair)
+    : Edge(id, nodepair) {}
 
-template <typename T>
-DirectedEdge<T>::DirectedEdge(
+DirectedEdge::DirectedEdge(
     const CXXGraph::id_t id,
-    const std::pair<shared<const Node<T>>, shared<const Node<T>>> &nodepair)
-    : Edge<T>(id, nodepair) {}
+    const std::pair<shared<const Node>, shared<const Node>> &nodepair)
+    : Edge(id, nodepair) {}
 
-template <typename T>
-DirectedEdge<T>::DirectedEdge(const Edge<T> &edge)
+DirectedEdge::DirectedEdge(const Edge &edge)
     : DirectedEdge(edge.getId(), *(edge.getNodePair().first),
                    *(edge.getNodePair().second)) {}
 
-template <typename T>
-const Node<T> &DirectedEdge<T>::getFrom() const {
-  return *(Edge<T>::getNodePair().first);
+const Node &DirectedEdge::getFrom() const {
+  return *(Edge::getNodePair().first);
 }
 
-template <typename T>
-const Node<T> &DirectedEdge<T>::getTo() const {
-  return *(Edge<T>::getNodePair().second);
+const Node &DirectedEdge::getTo() const {
+  return *(Edge::getNodePair().second);
 }
 
-template <typename T>
-const std::optional<bool> DirectedEdge<T>::isDirected() const {
-  return true;
-}
+const std::optional<bool> DirectedEdge::isDirected() const { return true; }
 
-template <typename T>
-const std::optional<bool> DirectedEdge<T>::isWeighted() const {
-  return false;
-}
+const std::optional<bool> DirectedEdge::isWeighted() const { return false; }
 
-template <typename T>
-std::ostream &operator<<(std::ostream &os, const DirectedEdge<T> &edge) {
+std::ostream &operator<<(std::ostream &os, const DirectedEdge &edge) {
   os << "((Node: " << edge.getFrom().getId() << ")) +----- |Edge: #"
      << edge.getId() << "|-----> ((Node: " << edge.getTo().getId() << "))";
   return os;
