@@ -48,35 +48,34 @@ using std::make_unique;
 using std::make_shared;
 
 namespace Partitioning {
-template <typename T>
 class Partitioner {
  private:
-  shared<const T_EdgeSet<T>> dataset = nullptr;
-  shared<PartitionStrategy<T>> algorithm = nullptr;
+  shared<const T_EdgeSet> dataset = nullptr;
+  shared<PartitionStrategy> algorithm = nullptr;
   Globals GLOBALS;
 
-  CoordinatedPartitionState<T> startCoordinated();
+  CoordinatedPartitionState startCoordinated();
 
  public:
-  Partitioner(shared<const T_EdgeSet<T>> dataset, Globals &G);
+  Partitioner(shared<const T_EdgeSet> dataset, Globals &G);
   Partitioner(const Partitioner &other);
 
-  CoordinatedPartitionState<T> performCoordinatedPartition();
+  CoordinatedPartitionState performCoordinatedPartition();
 };
-template <typename T>
-Partitioner<T>::Partitioner(shared<const T_EdgeSet<T>> dataset, Globals &G)
+
+Partitioner::Partitioner(shared<const T_EdgeSet> dataset, Globals &G)
     : GLOBALS(G) {
   // this->GLOBALS = G;
   this->dataset = dataset;
   if (GLOBALS.partitionStategy == PartitionAlgorithm::HDRF_ALG) {
-    algorithm = make_shared<HDRF<T>>(GLOBALS);
+    algorithm = make_shared<HDRF>(GLOBALS);
   } else if (GLOBALS.partitionStategy ==
              PartitionAlgorithm::EDGEBALANCED_VC_ALG) {
-    algorithm = make_shared<EdgeBalancedVertexCut<T>>(GLOBALS);
+    algorithm = make_shared<EdgeBalancedVertexCut>(GLOBALS);
   } else if (GLOBALS.partitionStategy == PartitionAlgorithm::GREEDY_VC_ALG) {
-    algorithm = make_shared<GreedyVertexCut<T>>(GLOBALS);
+    algorithm = make_shared<GreedyVertexCut>(GLOBALS);
   } else if (GLOBALS.partitionStategy == PartitionAlgorithm::EBV_ALG) {
-    algorithm = make_shared<EBV<T>>(GLOBALS);
+    algorithm = make_shared<EBV>(GLOBALS);
   } else if (GLOBALS.partitionStategy == PartitionAlgorithm::WB_LIBRA) {
     // precompute weight sum
     double weight_sum = 0.0;
@@ -102,24 +101,23 @@ Partitioner<T>::Partitioner(shared<const T_EdgeSet<T>> dataset, Globals &G)
       vertices_degrees[v]++;
     }
 
-    algorithm = make_shared<WeightBalancedLibra<T>>(GLOBALS, weight_sum_bound,
+    algorithm = make_shared<WeightBalancedLibra>(GLOBALS, weight_sum_bound,
                                            std::move(vertices_degrees));
   }
 }
 
-template <typename T>
-Partitioner<T>::Partitioner(const Partitioner &other) {
+Partitioner::Partitioner(const Partitioner &other) {
   this->dataset = other.dataset;
   this->GLOBALS = other.GLOBALS;
   if (GLOBALS.partitionStategy == PartitionAlgorithm::HDRF_ALG) {
-    algorithm = make_shared<HDRF<T>>(GLOBALS);
+    algorithm = make_shared<HDRF>(GLOBALS);
   } else if (GLOBALS.partitionStategy ==
              PartitionAlgorithm::EDGEBALANCED_VC_ALG) {
-    algorithm = make_shared<EdgeBalancedVertexCut<T>>(GLOBALS);
+    algorithm = make_shared<EdgeBalancedVertexCut>(GLOBALS);
   } else if (GLOBALS.partitionStategy == PartitionAlgorithm::GREEDY_VC_ALG) {
-    algorithm = make_shared<GreedyVertexCut<T>>(GLOBALS);
+    algorithm = make_shared<GreedyVertexCut>(GLOBALS);
   } else if (GLOBALS.partitionStategy == PartitionAlgorithm::EBV_ALG) {
-    algorithm = make_shared<EBV<T>>(GLOBALS);
+    algorithm = make_shared<EBV>(GLOBALS);
   } else if (GLOBALS.partitionStategy == PartitionAlgorithm::WB_LIBRA) {
     // precompute weight sum
     double weight_sum = 0.0;
@@ -145,19 +143,18 @@ Partitioner<T>::Partitioner(const Partitioner &other) {
       vertices_degrees[v]++;
     }
 
-    algorithm = make_shared<WeightBalancedLibra<T>>(GLOBALS, weight_sum_bound,
+    algorithm = make_shared<WeightBalancedLibra>(GLOBALS, weight_sum_bound,
                                            std::move(vertices_degrees));
   }
 }
 
-template <typename T>
-CoordinatedPartitionState<T> Partitioner<T>::startCoordinated() {
-  CoordinatedPartitionState<T> state(GLOBALS);
+CoordinatedPartitionState Partitioner::startCoordinated() {
+  CoordinatedPartitionState state(GLOBALS);
   int processors = GLOBALS.threads;
 
   std::vector<std::thread> myThreads(processors);
   std::vector<std::shared_ptr<Runnable>> myRunnable(processors);
-  std::vector<std::vector<shared<const Edge<T>>>> list_vector(processors);
+  std::vector<std::vector<shared<const Edge>>> list_vector(processors);
   size_t n = dataset->size();
   int subSize = (int)n / processors + 1;
   for (int t = 0; t < processors; ++t) {
@@ -165,11 +162,11 @@ CoordinatedPartitionState<T> Partitioner<T>::startCoordinated() {
     int iEnd = std::min((t + 1) * subSize, (int)n);
     if (iEnd >= iStart) {
       list_vector[t] =
-          std::vector<shared<const Edge<T>>>(std::next(dataset->begin(), iStart),
+          std::vector<shared<const Edge>>(std::next(dataset->begin(), iStart),
                                        std::next(dataset->begin(), iEnd));
       myRunnable[t].reset(
-          new PartitionerThread<T>(list_vector[t],
-								   make_shared<CoordinatedPartitionState<T>>(state),
+          new PartitionerThread(list_vector[t],
+								   make_shared<CoordinatedPartitionState>(state),
 								   algorithm));
       myThreads[t] = std::thread(&Runnable::run, myRunnable[t].get());
     }
@@ -192,8 +189,7 @@ CoordinatedPartitionState<T> Partitioner<T>::startCoordinated() {
   return state;
 }
 
-template <typename T>
-CoordinatedPartitionState<T> Partitioner<T>::performCoordinatedPartition() {
+CoordinatedPartitionState Partitioner::performCoordinatedPartition() {
   return startCoordinated();
 }
 

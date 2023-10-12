@@ -26,41 +26,40 @@
 #include <vector>
 
 #include "CXXGraph/Edge/Edge.hpp"
+#include "CXXGraph/Utility/Runnable.hpp"
 #include "PartitionState.hpp"
 #include "PartitionStrategy.hpp"
-#include "CXXGraph/Utility/Runnable.hpp"
 
 namespace CXXGraph {
 namespace Partitioning {
-template <typename T>
 class PartitionerThread : public Runnable {
  private:
-  std::vector<shared<const Edge<T>>> list = {};
-  shared<PartitionState<T>> state = nullptr;
-  shared<PartitionStrategy<T>> algorithm = nullptr;
+  std::vector<shared<const Edge>> list = {};
+  shared<PartitionState> state = nullptr;
+  shared<PartitionStrategy> algorithm = nullptr;
 
  public:
-  PartitionerThread(std::vector<shared<const Edge<T>>> &list,
-                    shared<PartitionState<T>> state,
-					shared<PartitionStrategy<T>> algorithm);
+  PartitionerThread(std::vector<shared<const Edge>> &list,
+                    shared<PartitionState> state,
+                    shared<PartitionStrategy> algorithm);
   ~PartitionerThread();
 
   void run() override;
 
   std::list<int> id_partitions;
 };
-template <typename T>
-PartitionerThread<T>::PartitionerThread(std::vector<shared<const Edge<T>>> &list,
-                                        shared<PartitionState<T>> state,
-                                        shared<PartitionStrategy<T>> algorithm) {
+
+PartitionerThread::PartitionerThread(std::vector<shared<const Edge>> &list,
+                                     shared<PartitionState> state,
+                                     shared<PartitionStrategy> algorithm) {
   this->list = list;
   this->state = state;
   this->algorithm = algorithm;
 }
-template <typename T>
-PartitionerThread<T>::~PartitionerThread() {}
-template <typename T>
-void PartitionerThread<T>::run() {
+
+PartitionerThread::~PartitionerThread() {}
+
+void PartitionerThread::run() {
   for (const auto &edge_it : list) {
     algorithm->performStep(edge_it, state);
   }

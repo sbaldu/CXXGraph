@@ -26,7 +26,6 @@
 
 namespace CXXGraph {
 namespace Partitioning {
-template <typename T>
 class Record {
  public:
   virtual const std::set<int> &getPartitions() const = 0;

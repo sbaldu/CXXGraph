@@ -36,15 +36,14 @@ using std::make_unique;
 using std::make_shared;
 
 namespace Partitioning {
-template <typename T>
 class PartitionState {
  public:
-  virtual shared<Record<T>> getRecord(CXXGraph::id_t x) = 0;
+  virtual shared<Record> getRecord(CXXGraph::id_t x) = 0;
   virtual int getMachineLoad(const int m) const = 0;
   virtual int getMachineWeight(const int m) const = 0;
   virtual int getMachineLoadVertices(const int m) const = 0;
-  virtual void incrementMachineLoad(const int m, shared<const Edge<T>> e) = 0;
-  virtual void incrementMachineWeight(const int m, shared<const Edge<T>> e) = 0;
+  virtual void incrementMachineLoad(const int m, shared<const Edge> e) = 0;
+  virtual void incrementMachineWeight(const int m, shared<const Edge> e) = 0;
   virtual int getMinLoad() const = 0;
   virtual int getMaxLoad() const = 0;
   virtual int getMachineWithMinWeight() const = 0;

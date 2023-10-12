@@ -46,8 +46,7 @@ namespace Partitioning {
  * @details This algorithm is a greedy algorithm that partitions the graph into
  * n sets of vertices.
  */
-template <typename T>
-class GreedyVertexCut : public PartitionStrategy<T> {
+class GreedyVertexCut : public PartitionStrategy {
  private:
   Globals GLOBALS;
 
@@ -55,25 +54,22 @@ class GreedyVertexCut : public PartitionStrategy<T> {
   explicit GreedyVertexCut(const Globals &G);
   ~GreedyVertexCut();
 
-  void performStep(shared<const Edge<T>> e, shared<PartitionState<T>> Sstate) override;
+  void performStep(shared<const Edge> e, shared<PartitionState> Sstate) override;
 };
 
-template <typename T>
-GreedyVertexCut<T>::GreedyVertexCut(const Globals &G) : GLOBALS(G) {}
+GreedyVertexCut::GreedyVertexCut(const Globals &G) : GLOBALS(G) {}
 
-template <typename T>
-GreedyVertexCut<T>::~GreedyVertexCut() {}
+GreedyVertexCut::~GreedyVertexCut() {}
 
-template <typename T>
-void GreedyVertexCut<T>::performStep(shared<const Edge<T>> e,
-                                     shared<PartitionState<T>> state) {
+void GreedyVertexCut::performStep(shared<const Edge> e,
+                                     shared<PartitionState> state) {
   int P = GLOBALS.numberOfPartition;
   auto nodePair = e->getNodePair();
   CXXGraph::id_t u = nodePair.first->getId();
   CXXGraph::id_t v = nodePair.second->getId();
 
-  std::shared_ptr<Record<T>> u_record = state->getRecord(u);
-  std::shared_ptr<Record<T>> v_record = state->getRecord(v);
+  std::shared_ptr<Record> u_record = state->getRecord(u);
+  std::shared_ptr<Record> v_record = state->getRecord(v);
 
   //*** ASK FOR LOCK
   bool locks_taken = false;
@@ -196,8 +192,8 @@ void GreedyVertexCut<T>::performStep(shared<const Edge<T>> e,
   int choice = distribution(rand) % candidates.size();
   machine_id = candidates.at(choice);
   try {
-    shared<CoordinatedPartitionState<T>> cord_state =
-        std::static_pointer_cast<CoordinatedPartitionState<T>>(state);
+    shared<CoordinatedPartitionState> cord_state =
+        std::static_pointer_cast<CoordinatedPartitionState>(state);
     // NEW UPDATE RECORDS RULE TO UPFDATE THE SIZE OF THE PARTITIONS EXPRESSED
     // AS THE NUMBER OF VERTICES THEY CONTAINS
     if (!u_record->hasReplicaInPartition(machine_id)) {

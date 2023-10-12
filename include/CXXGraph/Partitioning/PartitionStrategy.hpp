@@ -36,10 +36,9 @@ using std::make_unique;
 using std::make_shared;
 
 namespace Partitioning {
-template <typename T>
 class PartitionStrategy {
  public:
-  virtual void performStep(shared<const Edge<T>> t, shared<PartitionState<T>> Sstate) = 0;
+  virtual void performStep(shared<const Edge> t, shared<PartitionState> Sstate) = 0;
 };
 }  // namespace Partitioning
 }  // namespace CXXGraph

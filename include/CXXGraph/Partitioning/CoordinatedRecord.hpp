@@ -30,8 +30,7 @@
 namespace CXXGraph {
 namespace Partitioning {
 
-template <typename T>
-class CoordinatedRecord : public Record<T> {
+class CoordinatedRecord : public Record {
  private:
   std::set<int> partitions = {};
   std::mutex *lock = nullptr;
@@ -58,8 +57,8 @@ class CoordinatedRecord : public Record<T> {
   std::set<int> partition_difference(
       const std::shared_ptr<CoordinatedRecord> other) const;
 };
-template <typename T>
-std::set<int> CoordinatedRecord<T>::partition_intersection(
+
+std::set<int> CoordinatedRecord::partition_intersection(
     std::shared_ptr<CoordinatedRecord> other) const {
   std::set<int> result;
   set_intersection(this->partitions.begin(), this->partitions.end(),
@@ -67,8 +66,8 @@ std::set<int> CoordinatedRecord<T>::partition_intersection(
                    std::inserter(result, result.begin()));
   return result;
 }
-template <typename T>
-std::set<int> CoordinatedRecord<T>::partition_union(
+
+std::set<int> CoordinatedRecord::partition_union(
     std::shared_ptr<CoordinatedRecord> other) const {
   std::set<int> result;
   set_union(this->partitions.begin(), this->partitions.end(),
@@ -76,8 +75,8 @@ std::set<int> CoordinatedRecord<T>::partition_union(
             std::inserter(result, result.begin()));
   return result;
 }
-template <typename T>
-std::set<int> CoordinatedRecord<T>::partition_difference(
+
+std::set<int> CoordinatedRecord::partition_difference(
     std::shared_ptr<CoordinatedRecord> other) const {
   std::set<int> result;
   set_difference(this->partitions.begin(), this->partitions.end(),
@@ -85,58 +84,58 @@ std::set<int> CoordinatedRecord<T>::partition_difference(
                  std::inserter(result, result.begin()));
   return result;
 }
-template <typename T>
-CoordinatedRecord<T>::CoordinatedRecord() : partitions() {
+
+CoordinatedRecord::CoordinatedRecord() : partitions() {
   lock = new std::mutex();
   degree = 0;
 }
-template <typename T>
-CoordinatedRecord<T>::~CoordinatedRecord() {
-  // std::cout << "CoordinatedRecord<T>::~CoordinatedRecord()" << std::endl;
+
+CoordinatedRecord::~CoordinatedRecord() {
+  // std::cout << "CoordinatedRecord::~CoordinatedRecord()" << std::endl;
   // TODOOOOOOOO
   if (lock != nullptr) {
     delete lock;
   }
 }
-template <typename T>
-const std::set<int> &CoordinatedRecord<T>::getPartitions() const {
+
+const std::set<int> &CoordinatedRecord::getPartitions() const {
   return partitions;
 }
-template <typename T>
-void CoordinatedRecord<T>::addPartition(int m) {
+
+void CoordinatedRecord::addPartition(int m) {
   if (m == -1) {
     std::cout << "ERROR! record.addPartition(-1)" << std::endl;
     exit(-1);
   }
   partitions.insert(m);
 }
-template <typename T>
-bool CoordinatedRecord<T>::hasReplicaInPartition(const int m) const {
+
+bool CoordinatedRecord::hasReplicaInPartition(const int m) const {
   return partitions.find(m) != partitions.end();
 }
-template <typename T>
-bool CoordinatedRecord<T>::getLock() {
+
+bool CoordinatedRecord::getLock() {
   return lock->try_lock();
 }
-template <typename T>
-bool CoordinatedRecord<T>::releaseLock() {
+
+bool CoordinatedRecord::releaseLock() {
   lock->unlock();
   return true;
 }
-template <typename T>
-int CoordinatedRecord<T>::getReplicas() const {
+
+int CoordinatedRecord::getReplicas() const {
   return (int)partitions.size();
 }
-template <typename T>
-int CoordinatedRecord<T>::getDegree() const {
+
+int CoordinatedRecord::getDegree() const {
   return degree;
 }
-template <typename T>
-void CoordinatedRecord<T>::incrementDegree() {
+
+void CoordinatedRecord::incrementDegree() {
   degree++;
 }
-template <typename T>
-void CoordinatedRecord<T>::addAll(const std::set<int> &set) {
+
+void CoordinatedRecord::addAll(const std::set<int> &set) {
   partitions.insert(set.begin(), set.end());
 }
 }  // namespace Partitioning

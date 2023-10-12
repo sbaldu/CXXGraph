@@ -48,8 +48,7 @@ namespace Partitioning {
  * n sets of vertices ( as described by this paper
  * https://www.fabiopetroni.com/Download/petroni2015HDRF.pdf ).
  */
-template <typename T>
-class HDRF : public PartitionStrategy<T> {
+class HDRF : public PartitionStrategy {
  private:
   Globals GLOBALS;
 
@@ -57,24 +56,25 @@ class HDRF : public PartitionStrategy<T> {
   explicit HDRF(const Globals &G);
   ~HDRF();
 
-  void performStep(shared<const Edge<T>> e, shared<PartitionState<T>> Sstate) override;
+  void performStep(shared<const Edge> e, shared<PartitionState> Sstate) override;
 };
-template <typename T>
-HDRF<T>::HDRF(const Globals &G) : GLOBALS(G) {
+
+
+HDRF::HDRF(const Globals &G) : GLOBALS(G) {
   // this->GLOBALS = G;
 }
-template <typename T>
-HDRF<T>::~HDRF() {}
-template <typename T>
-void HDRF<T>::performStep(shared<const Edge<T>> e, shared<PartitionState<T>> state) {
+
+HDRF::~HDRF() {}
+
+void HDRF::performStep(shared<const Edge> e, shared<PartitionState> state) {
   int P = GLOBALS.numberOfPartition;
   double lambda = GLOBALS.param1;
   double epsilon = GLOBALS.param2;
   auto nodePair = e->getNodePair();
   CXXGraph::id_t u = nodePair.first->getId();
   CXXGraph::id_t v = nodePair.second->getId();
-  std::shared_ptr<Record<T>> u_record = state->getRecord(u);
-  std::shared_ptr<Record<T>> v_record = state->getRecord(v);
+  std::shared_ptr<Record> u_record = state->getRecord(u);
+  std::shared_ptr<Record> v_record = state->getRecord(v);
 
   //*** ASK FOR LOCK
   bool locks_taken = false;
@@ -168,8 +168,8 @@ void HDRF<T>::performStep(shared<const Edge<T>> e, shared<PartitionState<T>> sta
   int choice = distribution(rand) % candidates.size();
   machine_id = candidates.at(choice);
   try {
-    shared<CoordinatedPartitionState<T>> cord_state =
-        std::static_pointer_cast<CoordinatedPartitionState<T>>(state);
+    shared<CoordinatedPartitionState> cord_state =
+        std::static_pointer_cast<CoordinatedPartitionState>(state);
     // NEW UPDATE RECORDS RULE TO UPFDATE THE SIZE OF THE PARTITIONS EXPRESSED
     // AS THE NUMBER OF VERTICES THEY CONTAINS
     if (!u_record->hasReplicaInPartition(machine_id)) {

@@ -37,8 +37,7 @@ namespace Partitioning {
  * n sets of vertices ( as described by this paper
  * https://arxiv.org/pdf/2010.04414.pdf ).
  */
-template <typename T>
-class WeightBalancedLibra : public PartitionStrategy<T> {
+class WeightBalancedLibra : public PartitionStrategy {
  private:
   Globals GLOBALS;
   double weight_sum_bound;
@@ -50,26 +49,26 @@ class WeightBalancedLibra : public PartitionStrategy<T> {
       std::unordered_map<std::size_t, int> &&_vertices_degrees);
   ~WeightBalancedLibra();
 
-  void performStep(shared<const Edge<T>> e, shared<PartitionState<T>> Sstate) override;
+  void performStep(shared<const Edge> e, shared<PartitionState> Sstate) override;
 };
-template <typename T>
-WeightBalancedLibra<T>::WeightBalancedLibra(
+
+WeightBalancedLibra::WeightBalancedLibra(
     const Globals &G, double _weight_sum_bound,
     std::unordered_map<std::size_t, int> &&_vertices_degrees)
     : GLOBALS(G),
       weight_sum_bound(_weight_sum_bound),
       vertices_degrees(_vertices_degrees) {}
-template <typename T>
-WeightBalancedLibra<T>::~WeightBalancedLibra() {}
-template <typename T>
-void WeightBalancedLibra<T>::performStep(shared<const Edge<T>> e,
-                                         shared<PartitionState<T>> state) {
+
+WeightBalancedLibra::~WeightBalancedLibra() {}
+
+void WeightBalancedLibra::performStep(shared<const Edge> e,
+                                         shared<PartitionState> state) {
   int P = GLOBALS.numberOfPartition;
   auto nodePair = e->getNodePair();
   size_t u = nodePair.first->getId();
   size_t v = nodePair.second->getId();
-  std::shared_ptr<Record<T>> u_record = state->getRecord(u);
-  std::shared_ptr<Record<T>> v_record = state->getRecord(v);
+  std::shared_ptr<Record> u_record = state->getRecord(u);
+  std::shared_ptr<Record> v_record = state->getRecord(v);
 
   //*** ASK FOR LOCK
   bool locks_taken = false;
@@ -123,10 +122,10 @@ void WeightBalancedLibra<T>::performStep(shared<const Edge<T>> e,
   }
   // Case 4: one or more edges of both nodes have been assigned
   else {
-    std::shared_ptr<CoordinatedRecord<T>> u_coord_record =
-        std::dynamic_pointer_cast<CoordinatedRecord<T>>(u_record);
-    std::shared_ptr<CoordinatedRecord<T>> v_coord_record =
-        std::dynamic_pointer_cast<CoordinatedRecord<T>>(v_record);
+    std::shared_ptr<CoordinatedRecord> u_coord_record =
+        std::dynamic_pointer_cast<CoordinatedRecord>(u_record);
+    std::shared_ptr<CoordinatedRecord> v_coord_record =
+        std::dynamic_pointer_cast<CoordinatedRecord>(v_record);
     const auto &uv_intersection =
         u_coord_record->partition_intersection(v_coord_record);
 

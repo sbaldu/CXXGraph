@@ -46,8 +46,7 @@ namespace Partitioning {
  * @details This algorithm is a greedy algorithm that assign an edge in the
  * partition with less load
  */
-template <typename T>
-class EdgeBalancedVertexCut : public PartitionStrategy<T> {
+class EdgeBalancedVertexCut : public PartitionStrategy {
  private:
   Globals GLOBALS;
 
@@ -55,24 +54,24 @@ class EdgeBalancedVertexCut : public PartitionStrategy<T> {
   explicit EdgeBalancedVertexCut(const Globals &G);
   ~EdgeBalancedVertexCut();
 
-  void performStep(shared<const Edge<T>> e, shared<PartitionState<T>> Sstate) override;
+  void performStep(shared<const Edge> e, shared<PartitionState> Sstate) override;
 };
-template <typename T>
-EdgeBalancedVertexCut<T>::EdgeBalancedVertexCut(const Globals &G) : GLOBALS(G) {
+
+EdgeBalancedVertexCut::EdgeBalancedVertexCut(const Globals &G) : GLOBALS(G) {
   // this->GLOBALS = G;
 }
-template <typename T>
-EdgeBalancedVertexCut<T>::~EdgeBalancedVertexCut() {}
-template <typename T>
-void EdgeBalancedVertexCut<T>::performStep(shared<const Edge<T>> e,
-                                           shared<PartitionState<T>> state) {
+
+EdgeBalancedVertexCut::~EdgeBalancedVertexCut() {}
+
+void EdgeBalancedVertexCut::performStep(shared<const Edge> e,
+                                           shared<PartitionState> state) {
   int P = GLOBALS.numberOfPartition;
   auto nodePair = e->getNodePair();
   CXXGraph::id_t u = nodePair.first->getId();
   CXXGraph::id_t v = nodePair.second->getId();
 
-  std::shared_ptr<Record<T>> u_record = state->getRecord(u);
-  std::shared_ptr<Record<T>> v_record = state->getRecord(v);
+  std::shared_ptr<Record> u_record = state->getRecord(u);
+  std::shared_ptr<Record> v_record = state->getRecord(v);
 
   //*** ASK FOR LOCK
   bool locks_taken = false;
@@ -113,8 +112,8 @@ void EdgeBalancedVertexCut<T>::performStep(shared<const Edge<T>> e,
     }
   }
   try {
-    shared<CoordinatedPartitionState<T>> cord_state =
-        std::static_pointer_cast<CoordinatedPartitionState<T>>(state);
+    shared<CoordinatedPartitionState> cord_state =
+        std::static_pointer_cast<CoordinatedPartitionState>(state);
     // NEW UPDATE RECORDS RULE TO UPFDATE THE SIZE OF THE PARTITIONS EXPRESSED
     // AS THE NUMBER OF VERTICES THEY CONTAINS
     if (!u_record->hasReplicaInPartition(machine_id)) {

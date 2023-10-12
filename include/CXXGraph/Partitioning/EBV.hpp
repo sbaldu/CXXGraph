@@ -48,8 +48,7 @@ namespace Partitioning {
  * into n sets of vertices ( as described by this paper
  * https://arxiv.org/abs/2010.09007 ).
  */
-template <typename T>
-class EBV : public PartitionStrategy<T> {
+class EBV : public PartitionStrategy {
  private:
   Globals GLOBALS;
 
@@ -57,16 +56,16 @@ class EBV : public PartitionStrategy<T> {
   explicit EBV(const Globals &G);
   ~EBV();
 
-  void performStep(shared<const Edge<T>> e, shared<PartitionState<T>> Sstate) override;
+  void performStep(shared<const Edge> e, shared<PartitionState> Sstate) override;
 };
-template <typename T>
-EBV<T>::EBV(const Globals &G) : GLOBALS(G) {
+
+EBV::EBV(const Globals &G) : GLOBALS(G) {
   // this->GLOBALS = G;
 }
-template <typename T>
-EBV<T>::~EBV() {}
-template <typename T>
-void EBV<T>::performStep(shared<const Edge<T>> e, shared<PartitionState<T>> state){
+
+EBV::~EBV() {}
+
+void EBV::performStep(shared<const Edge> e, shared<PartitionState> state){
   GLOBALS.edgeAnalyzed++;
 
   int P = GLOBALS.numberOfPartition;
@@ -78,8 +77,8 @@ void EBV<T>::performStep(shared<const Edge<T>> e, shared<PartitionState<T>> stat
   CXXGraph::id_t u = nodePair.first->getId();
   CXXGraph::id_t v = nodePair.second->getId();
 
-  std::shared_ptr<Record<T>> u_record = state->getRecord(u);
-  std::shared_ptr<Record<T>> v_record = state->getRecord(v);
+  std::shared_ptr<Record> u_record = state->getRecord(u);
+  std::shared_ptr<Record> v_record = state->getRecord(v);
 
   //*** ASK FOR LOCK
   bool locks_taken = false;
@@ -135,8 +134,8 @@ void EBV<T>::performStep(shared<const Edge<T>> e, shared<PartitionState<T>> stat
     }
   }
   try {
-    shared<CoordinatedPartitionState<T>> cord_state =
-        std::static_pointer_cast<CoordinatedPartitionState<T>>(state);
+    shared<CoordinatedPartitionState> cord_state =
+        std::static_pointer_cast<CoordinatedPartitionState>(state);
     // NEW UPDATE RECORDS RULE TO UPFDATE THE SIZE OF THE PARTITIONS EXPRESSED
     // AS THE NUMBER OF VERTICES THEY CONTAINS
     if (!u_record->hasReplicaInPartition(machine_id)) {

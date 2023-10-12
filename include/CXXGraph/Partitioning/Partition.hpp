@@ -39,22 +39,18 @@ using shared= std::shared_ptr<T>;
 using std::make_unique;
 using std::make_shared;
 
-template <typename T>
 class Graph;
 
-template <typename T>
-using T_EdgeSet = std::unordered_set<shared<const Edge<T>>, edgeHash<T>>;
+using T_EdgeSet = std::unordered_set<shared<const Edge>, edgeHash>;
 namespace Partitioning {
-template <typename T>
-std::ostream &operator<<(std::ostream &o, const Partition<T> &partition);
+std::ostream &operator<<(std::ostream &o, const Partition &partition);
 
-template <typename T>
-class Partition : public Graph<T> {
+class Partition : public Graph {
  public:
   Partition();
   explicit Partition(const CXXGraph::id_t partitionId);
-  explicit Partition(const T_EdgeSet<T> &edgeSet);
-  Partition(const CXXGraph::id_t partitionId, const T_EdgeSet<T> &edgeSet);
+  explicit Partition(const T_EdgeSet &edgeSet);
+  Partition(const CXXGraph::id_t partitionId, const T_EdgeSet &edgeSet);
   ~Partition() = default;
   /**
    * @brief Get the Partition ID
@@ -80,8 +76,7 @@ class Partition : public Graph<T> {
  *
  * @return The Statistic of the Partioned Graph
  */
-template <typename T>
-static PartitioningStats getPartitionStats(const PartitionMap<T> &partitionMap);
+static PartitioningStats getPartitionStats(const PartitionMap &partitionMap);
 
 /**
  * @brief Calculate the Maximum Load in a single partition (in terms of edges)
@@ -91,8 +86,7 @@ static PartitioningStats getPartitionStats(const PartitionMap<T> &partitionMap);
  *
  * @return The value of the Maximum Load
  */
-template <typename T>
-static unsigned int getMaxEdgesLoad(const PartitionMap<T> &partitionMap);
+static unsigned int getMaxEdgesLoad(const PartitionMap &partitionMap);
 
 /**
  * @brief Calculate the Minimum Load in a single partition (in terms of edges)
@@ -102,8 +96,7 @@ static unsigned int getMaxEdgesLoad(const PartitionMap<T> &partitionMap);
  *
  * @return The value of the Minimum Load
  */
-template <typename T>
-static unsigned int getMinEdgesLoad(const PartitionMap<T> &partitionMap);
+static unsigned int getMinEdgesLoad(const PartitionMap &partitionMap);
 
 /**
  * @brief Calculate the Maximum Load in a single partition (in terms of nodes)
@@ -113,8 +106,7 @@ static unsigned int getMinEdgesLoad(const PartitionMap<T> &partitionMap);
  *
  * @return The value of the Maximum Load
  */
-template <typename T>
-static unsigned int getMaxNodesLoad(const PartitionMap<T> &partitionMap);
+static unsigned int getMaxNodesLoad(const PartitionMap &partitionMap);
 
 /**
  * @brief Calculate the Minimum Load in a single partition (in terms of nodes)
@@ -124,8 +116,7 @@ static unsigned int getMaxNodesLoad(const PartitionMap<T> &partitionMap);
  *
  * @return The value of the Minimum Load
  */
-template <typename T>
-static unsigned int getMinNodesLoad(const PartitionMap<T> &partitionMap);
+static unsigned int getMinNodesLoad(const PartitionMap &partitionMap);
 
 /**
  * @brief Calculate the Number of Unique Edges in the Partitioned Graph ( this
@@ -135,8 +126,7 @@ static unsigned int getMinNodesLoad(const PartitionMap<T> &partitionMap);
  *
  * @return The number of Edges
  */
-template <typename T>
-static unsigned int getNumberOfEdges(const PartitionMap<T> &partitionMap);
+static unsigned int getNumberOfEdges(const PartitionMap &partitionMap);
 
 /**
  * @brief Calculate the Number of Unique Nodes in the Partitioned Graph ( this
@@ -146,8 +136,7 @@ static unsigned int getNumberOfEdges(const PartitionMap<T> &partitionMap);
  *
  * @return The number of Nodes
  */
-template <typename T>
-static unsigned int getNumberOfNodes(const PartitionMap<T> &partitionMap);
+static unsigned int getNumberOfNodes(const PartitionMap &partitionMap);
 
 /**
  * @brief Calculate the Total Number of Edges in the Partitioned Graph
@@ -156,9 +145,8 @@ static unsigned int getNumberOfNodes(const PartitionMap<T> &partitionMap);
  *
  * @return The number of Edges
  */
-template <typename T>
 static unsigned int getNumberOfReplicatedEdges(
-    const PartitionMap<T> &partitionMap);
+    const PartitionMap &partitionMap);
 
 /**
  * @brief Calculate the Total Number of Nodes in the Partitioned Graph
@@ -167,44 +155,36 @@ static unsigned int getNumberOfReplicatedEdges(
  *
  * @return The number of Nodes
  */
-template <typename T>
 static unsigned int getNumberOfReplicatedNodes(
-    const PartitionMap<T> &partitionMap);
+    const PartitionMap &partitionMap);
 
-template <typename T>
-Partition<T>::Partition() : Graph<T>() {
+Partition::Partition() : Graph {
   partitionId = 0;
 }
 
-template <typename T>
-Partition<T>::Partition(const CXXGraph::id_t partitionId) : Graph<T>() {
+Partition::Partition(const CXXGraph::id_t partitionId) : Graph() {
   this->partitionId = partitionId;
 }
 
-template <typename T>
-Partition<T>::Partition(const T_EdgeSet<T> &edgeSet) : Graph<T>(edgeSet) {
+Partition::Partition(const T_EdgeSet &edgeSet) : Graph(edgeSet) {
   partitionId = 0;
 }
 
-template <typename T>
-Partition<T>::Partition(const CXXGraph::id_t partitionId,
-                        const T_EdgeSet<T> &edgeSet)
-    : Graph<T>(edgeSet) {
+Partition::Partition(const CXXGraph::id_t partitionId,
+                        const T_EdgeSet &edgeSet)
+    : Graph(edgeSet) {
   this->partitionId = partitionId;
 }
 
-template <typename T>
-CXXGraph::id_t Partition<T>::getPartitionId() const {
+CXXGraph::id_t Partition::getPartitionId() const {
   return partitionId;
 }
 
-template <typename T>
-void Partition<T>::setPartitionId(const CXXGraph::id_t partitionId) {
+void Partition::setPartitionId(const CXXGraph::id_t partitionId) {
   this->partitionId = partitionId;
 }
 
-template <typename T>
-PartitioningStats getPartitionStats(const PartitionMap<T> &partitionMap) {
+PartitioningStats getPartitionStats(const PartitionMap &partitionMap) {
   PartitioningStats result;
   result.numberOfPartitions = partitionMap.size();
   result.numberOfNodes = getNumberOfNodes(partitionMap);
@@ -228,8 +208,7 @@ PartitioningStats getPartitionStats(const PartitionMap<T> &partitionMap) {
   return result;
 }
 
-template <typename T>
-unsigned int getMaxEdgesLoad(const PartitionMap<T> &partitionMap) {
+unsigned int getMaxEdgesLoad(const PartitionMap &partitionMap) {
   unsigned int maxLoad = 0;
   for (const auto &it : partitionMap) {
     if (it.second->getEdgeSet().size() > maxLoad) {
@@ -239,8 +218,7 @@ unsigned int getMaxEdgesLoad(const PartitionMap<T> &partitionMap) {
   return maxLoad;
 }
 
-template <typename T>
-unsigned int getMinEdgesLoad(const PartitionMap<T> &partitionMap) {
+unsigned int getMinEdgesLoad(const PartitionMap &partitionMap) {
   unsigned int minLoad = std::numeric_limits<unsigned int>::max();
   for (const auto &it : partitionMap) {
     if (it.second->getEdgeSet().size() < minLoad) {
@@ -250,8 +228,7 @@ unsigned int getMinEdgesLoad(const PartitionMap<T> &partitionMap) {
   return minLoad;
 }
 
-template <typename T>
-unsigned int getMaxNodesLoad(const PartitionMap<T> &partitionMap) {
+unsigned int getMaxNodesLoad(const PartitionMap &partitionMap) {
   unsigned int maxLoad = 0;
   for (const auto &it : partitionMap) {
     if (it.second->getNodeSet().size() > maxLoad) {
@@ -261,8 +238,7 @@ unsigned int getMaxNodesLoad(const PartitionMap<T> &partitionMap) {
   return maxLoad;
 }
 
-template <typename T>
-unsigned int getMinNodesLoad(const PartitionMap<T> &partitionMap) {
+unsigned int getMinNodesLoad(const PartitionMap &partitionMap) {
   unsigned int minLoad = std::numeric_limits<unsigned int>::max();
   for (const auto &it : partitionMap) {
     if (it.second->getNodeSet().size() < minLoad) {
@@ -272,13 +248,12 @@ unsigned int getMinNodesLoad(const PartitionMap<T> &partitionMap) {
   return minLoad;
 }
 
-template <typename T>
-unsigned int getNumberOfEdges(const PartitionMap<T> &partitionMap) {
+unsigned int getNumberOfEdges(const PartitionMap &partitionMap) {
   unsigned int numberOfEdges = 0;
-  T_EdgeSet<T> edgeSet;
+  T_EdgeSet edgeSet;
 
   for (const auto &it : partitionMap) {
-    const T_EdgeSet<T> partitionEdgeSet = it.second->getEdgeSet();
+    const T_EdgeSet partitionEdgeSet = it.second->getEdgeSet();
     for (const auto &it2 : partitionEdgeSet) {
       edgeSet.insert(it2);
     }
@@ -287,15 +262,14 @@ unsigned int getNumberOfEdges(const PartitionMap<T> &partitionMap) {
   return edgeSet.size();
 }
 
-template <typename T>
-unsigned int getNumberOfNodes(const PartitionMap<T> &partitionMap) {
+unsigned int getNumberOfNodes(const PartitionMap &partitionMap) {
   unsigned int numberOfNodes = 0;
-  std::unordered_set<shared<const Node<T>>, nodeHash<T>> nodeSet;
+  std::unordered_set<shared<const Node>, nodeHash> nodeSet;
 
   for (const auto &it : partitionMap) {
-    const std::unordered_set<shared<const Node<T>>, nodeHash<T>> partitionNodeSet = it.second->getNodeSet();
+    const std::unordered_set<shared<const Node>, nodeHash> partitionNodeSet = it.second->getNodeSet();
     for (const auto &it2 : partitionNodeSet) {
-      // if (std::find_if(nodeSet.begin(), nodeSet.end(), [it2](const Node<T>
+      // if (std::find_if(nodeSet.begin(), nodeSet.end(), [it2](const Node
       // *node)
       //                  { return (*it2 == *node); }) == nodeSet.end())
       // {
@@ -307,8 +281,7 @@ unsigned int getNumberOfNodes(const PartitionMap<T> &partitionMap) {
   return nodeSet.size();
 }
 
-template <typename T>
-unsigned int getNumberOfReplicatedEdges(const PartitionMap<T> &partitionMap) {
+unsigned int getNumberOfReplicatedEdges(const PartitionMap &partitionMap) {
   unsigned int numberOfEdges = 0;
   for (const auto &it : partitionMap) {
     numberOfEdges += it.second->getEdgeSet().size();
@@ -316,8 +289,7 @@ unsigned int getNumberOfReplicatedEdges(const PartitionMap<T> &partitionMap) {
   return numberOfEdges;
 }
 
-template <typename T>
-unsigned int getNumberOfReplicatedNodes(const PartitionMap<T> &partitionMap) {
+unsigned int getNumberOfReplicatedNodes(const PartitionMap &partitionMap) {
   unsigned int numberOfNodes = 0;
   for (const auto &it : partitionMap) {
     numberOfNodes += it.second->getNodeSet().size();
@@ -325,8 +297,7 @@ unsigned int getNumberOfReplicatedNodes(const PartitionMap<T> &partitionMap) {
   return numberOfNodes;
 }
 
-template <typename T>
-std::ostream &operator<<(std::ostream &os, const Partition<T> &partition) {
+std::ostream &operator<<(std::ostream &os, const Partition &partition) {
   os << "Partition " << partition.getPartitionId() << ":\n";
   auto edgeList = partition.getEdgeSet();
   for (const auto &it : edgeList) {
@@ -337,16 +308,16 @@ std::ostream &operator<<(std::ostream &os, const Partition<T> &partition) {
                 (*it)->isDirected().value()) &&
                ((*it)->isWeighted().has_value() &&
                 (*it)->isWeighted().value())) {
-      os << std::static_pointer_cast<const DirectedWeightedEdge<T>>(*it) << "\n";
+      os << std::static_pointer_cast<const DirectedWeightedEdge>(*it) << "\n";
     } else if ((it->isDirected().has_value() && it->isDirected().value()) &&
                !(it->isWeighted().has_value() && it->isWeighted().value())) {
-      os << std::static_pointer_cast<const DirectedEdge<T>>(*it) << "\n";
+      os << std::static_pointer_cast<const DirectedEdge>(*it) << "\n";
     } else if (!(it->isDirected().has_value() && it->isDirected().value()) &&
                (it->isWeighted().has_value() && it->isWeighted().value())) {
-      os << std::static_pointer_cast<const UndirectedWeightedEdge<T>>(*it) << "\n";
+      os << std::static_pointer_cast<const UndirectedWeightedEdge>(*it) << "\n";
     } else if (!(it->isDirected().has_value() && it->isDirected().value()) &&
                !(it->isWeighted().has_value() && it->isWeighted().value())) {
-      os << std::static_pointer_cast<const UndirectedEdge<T>>(*it) << "\n";
+      os << std::static_pointer_cast<const UndirectedEdge>(*it) << "\n";
     } else {
       // Should never happens
       os << "Wrong Edge Class"
