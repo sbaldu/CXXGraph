@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <type_traits>
 
 #define IS_UNSIGNED(T) !(((T)-1) < 0)
