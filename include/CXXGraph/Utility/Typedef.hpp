@@ -162,7 +162,6 @@ typedef DialResult_struct DialResult;
 
 /// Struct that contains the information about TopologicalSort's Algorithm
 /// results
-template <typename T>
 struct TopoSortResult_struct {
   bool success =
       false;  // TRUE if the function does not return error, FALSE otherwise
@@ -179,42 +178,39 @@ struct TopoSortResult_struct {
   {}
   */
 };
-template <typename T>
-using TopoSortResult = TopoSortResult_struct<T>;
+
+using TopoSortResult = TopoSortResult_struct;
 
 // typedef for a collection of sets of vertices (useful for connected components
 // algorithms)
-template <typename T>
 using Components = std::vector<std::vector<Node>>;
 
 /// Struct that contains the information about strongly connected components
 /// (SCC) algorithms results
-template <typename T>
 struct SCCResult_struct {
   bool success =
       false;  // TRUE if the function does not return error, FALSE otherwise
   std::string errorMessage = "";  // message of error
-  Components<T> stronglyConnectedComps;
+  Components stronglyConnectedComps;
 };
-template <typename T>
-using SCCResult = SCCResult_struct<T>;
+
+using SCCResult = SCCResult_struct;
 
 /// Struct that contains the information about TopologicalSort's Algorithm
 /// results
-template <typename T>
 struct TarjanResult_struct {
   bool success =
       false;  // TRUE if the function does not return error, FALSE otherwise
   std::string errorMessage = "";  // message of error
-  Components<T>
+  Components
       stronglyConnectedComps;  // vectors that store nodes belong to same SCC
                                // (valid only if a graph is directed and flag
                                // TARJAN_FIND_SCC is set)
-  Components<T>
+  Components
       verticeBiconnectedComps;  // vectors that store nodes belong to same v-bcc
                                 // (valid only if a graph is undirected and flag
                                 // TARJAN_FIND_VBCC is set)
-  Components<T>
+  Components
       edgeBiconnectedComps;  // vectors that store nodes belong to same e-bcc
                              // (valid only if a graph is undirected and flag
                              // TARJAN_FIND_EBCC is set)
@@ -225,19 +221,18 @@ struct TarjanResult_struct {
                                  // (valid only is a graph is undirected and
                                  // flag TRAJAN_FIND_BRIDGES is set)
 };
-template <typename T>
-using TarjanResult = TarjanResult_struct<T>;
+
+using TarjanResult = TarjanResult_struct;
 
 /// Struct that contains the information about Best First Search Algorithm
 /// results
-template <typename T>
 struct BestFirstSearchResult_struct {
   bool success = false;
   std::string errorMessage = "";
   std::vector<Node> nodesInBestSearchOrder = {};
 };
-template <typename T>
-using BestFirstSearchResult = BestFirstSearchResult_struct<T>;
+
+using BestFirstSearchResult = BestFirstSearchResult_struct;
 
 /// Struct that contains the information about the partitioning statistics
 
@@ -248,7 +243,7 @@ using BestFirstSearchResult = BestFirstSearchResult_struct<T>;
 using AdjacencyMatrix = std::unordered_map<
     shared<const Node>,
     std::vector<std::pair<shared<const Node>, shared<const Edge>>>,
-    nodeHash<T>>;
+    nodeHash>;
 
 using PartitionMap =
     std::unordered_map<unsigned int,
