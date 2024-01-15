@@ -278,6 +278,23 @@ TEST(GraphTest, AddEdges_1) {
   ASSERT_EQ(graph.getNodeSet().size(), 3);
 }
 
+TEST(GraphTest, AddEdges_1_ref) {
+  CXXGraph::Node<int> node1("1", 1);
+  CXXGraph::Node<int> node2("2", 1);
+  CXXGraph::Node<int> node3("3", 1);
+  CXXGraph::DirectedEdge<int> edge1(1, node1, node2);
+  CXXGraph::DirectedEdge<int> edge2(2, node1, node3);
+  CXXGraph::DirectedEdge<int> edge3(3, node2, node3);
+  CXXGraph::Graph<int> graph;
+
+  graph.addEdges(edge1, edge2, edge3);
+
+  // Check the number of edges
+  ASSERT_EQ(graph.getEdgeSet().size(), 3);
+  // Check the number of nodes
+  ASSERT_EQ(graph.getNodeSet().size(), 3);
+}
+
 TEST(GraphTest, AddEdges_1_shared) {
   CXXGraph::Node<int> node1("1", 1);
   CXXGraph::Node<int> node2("2", 1);
@@ -299,6 +316,23 @@ TEST(GraphTest, AddEdges_1_shared) {
 }
 
 TEST(GraphTest, AddEdges_2) {
+  CXXGraph::Node<int> node1("1", 1);
+  CXXGraph::Node<int> node2("2", 1);
+  CXXGraph::Node<int> node3("3", 1);
+  CXXGraph::UndirectedEdge<int> edge1(1, node1, node2);
+  CXXGraph::UndirectedEdge<int> edge2(2, node1, node3);
+  CXXGraph::UndirectedEdge<int> edge3(3, node2, node3);
+  CXXGraph::Graph<int> graph;
+
+  graph.addEdges(&edge1, &edge2, &edge3);
+
+  // Check the number of edges
+  ASSERT_EQ(graph.getEdgeSet().size(), 3);
+  // Check the number of nodes
+  ASSERT_EQ(graph.getNodeSet().size(), 3);
+}
+
+TEST(GraphTest, AddEdges_2_ref) {
   CXXGraph::Node<int> node1("1", 1);
   CXXGraph::Node<int> node2("2", 1);
   CXXGraph::Node<int> node3("3", 1);
@@ -345,6 +379,41 @@ TEST(GraphTest, AddEdges_3) {
   CXXGraph::Graph<int> graph;
 
   graph.addEdges(&edge1, &edge2, &edge3);
+
+  // Check the number of edges
+  ASSERT_EQ(graph.getEdgeSet().size(), 3);
+  // Check the number of nodes
+  ASSERT_EQ(graph.getNodeSet().size(), 3);
+
+  // Check that the edges are weighted
+  ASSERT_TRUE((*graph.getEdge(1))->isWeighted());
+  ASSERT_TRUE((*graph.getEdge(2))->isWeighted());
+  ASSERT_TRUE((*graph.getEdge(3))->isWeighted());
+  // Check the value of the weights
+  ASSERT_EQ(
+      std::dynamic_pointer_cast<const CXXGraph::Weighted>(*graph.getEdge(1))
+          ->getWeight(),
+      4);
+  ASSERT_EQ(
+      std::dynamic_pointer_cast<const CXXGraph::Weighted>(*graph.getEdge(2))
+          ->getWeight(),
+      5);
+  ASSERT_EQ(
+      std::dynamic_pointer_cast<const CXXGraph::Weighted>(*graph.getEdge(3))
+          ->getWeight(),
+      6);
+}
+
+TEST(GraphTest, AddEdges_3_ref) {
+  CXXGraph::Node<int> node1("1", 1);
+  CXXGraph::Node<int> node2("2", 1);
+  CXXGraph::Node<int> node3("3", 1);
+  CXXGraph::DirectedWeightedEdge<int> edge1(1, node1, node2, 4);
+  CXXGraph::DirectedWeightedEdge<int> edge2(2, node1, node3, 5);
+  CXXGraph::DirectedWeightedEdge<int> edge3(3, node2, node3, 6);
+  CXXGraph::Graph<int> graph;
+
+  graph.addEdges(edge1, edge2, edge3);
 
   // Check the number of edges
   ASSERT_EQ(graph.getEdgeSet().size(), 3);
@@ -421,6 +490,41 @@ TEST(GraphTest, AddEdges_4) {
   CXXGraph::Graph<int> graph;
 
   graph.addEdges(&edge1, &edge2, &edge3);
+
+  // Check the number of edges
+  ASSERT_EQ(graph.getEdgeSet().size(), 3);
+  // Check the number of nodes
+  ASSERT_EQ(graph.getNodeSet().size(), 3);
+
+  // Check that the edges are weighted
+  ASSERT_TRUE((*graph.getEdge(1))->isWeighted());
+  ASSERT_TRUE((*graph.getEdge(2))->isWeighted());
+  ASSERT_TRUE((*graph.getEdge(3))->isWeighted());
+  // Check the value of the weights
+  ASSERT_EQ(
+      std::dynamic_pointer_cast<const CXXGraph::Weighted>(*graph.getEdge(1))
+          ->getWeight(),
+      4);
+  ASSERT_EQ(
+      std::dynamic_pointer_cast<const CXXGraph::Weighted>(*graph.getEdge(2))
+          ->getWeight(),
+      5);
+  ASSERT_EQ(
+      std::dynamic_pointer_cast<const CXXGraph::Weighted>(*graph.getEdge(3))
+          ->getWeight(),
+      6);
+}
+
+TEST(GraphTest, AddEdges_4_ref) {
+  CXXGraph::Node<int> node1("1", 1);
+  CXXGraph::Node<int> node2("2", 1);
+  CXXGraph::Node<int> node3("3", 1);
+  CXXGraph::UndirectedWeightedEdge<int> edge1(1, node1, node2, 4);
+  CXXGraph::UndirectedWeightedEdge<int> edge2(2, node1, node3, 5);
+  CXXGraph::UndirectedWeightedEdge<int> edge3(3, node2, node3, 6);
+  CXXGraph::Graph<int> graph;
+
+  graph.addEdges(edge1, edge2, edge3);
 
   // Check the number of edges
   ASSERT_EQ(graph.getEdgeSet().size(), 3);
