@@ -152,6 +152,14 @@ void Graph<T>::addEdges() {
 
 template <typename T>
 template <typename T1, typename... Tn>
+std::enable_if_t<is_edge_v<T1> && (is_edge_v<Tn> && ...), void>
+Graph<T>::addEdges(T1 edge, Tn... edges) {
+  addEdge(std::make_shared<T1>(edge));
+  addEdges(edges...);
+}
+
+template <typename T>
+template <typename T1, typename... Tn>
 std::enable_if_t<is_edge_ptr_v<T1> && (is_edge_ptr_v<Tn> && ...), void>
 Graph<T>::addEdges(T1 edge, Tn... edges) {
   addEdge(edge);
@@ -173,6 +181,14 @@ template <typename T>
 template <typename... Tn>
 void Graph<T>::addNodes() {
   return;
+}
+
+template <typename T>
+template <typename T1, typename... Tn>
+std::enable_if_t<is_node_v<T1> && (is_node_v<Tn> && ...), void>
+Graph<T>::addNodes(T1 node, Tn... nodes) {
+  addNode(std::make_shared<T1>(node));
+  addNodes(nodes...);
 }
 
 template <typename T>

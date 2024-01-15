@@ -169,6 +169,16 @@ class Graph {
    * \brief
    * Function that adds any number of Edges to the Graph Edge set
    *
+   * @param Edges passed by const ref
+   *
+   */
+  template <typename T1, typename... Tn>
+  std::enable_if_t<is_edge_v<T1> && (is_edge_v<Tn> && ...), void>
+  addEdges(T1 edge, Tn... edges);
+  /**
+   * \brief
+   * Function that adds any number of Edges to the Graph Edge set
+   *
    * @param Raw pointers or shared pointers to the Edges
    *
    */
@@ -207,11 +217,21 @@ class Graph {
    * \brief
    * Function that adds any number of Nodes to the Graph Node set
    *
-   * @param Raw pointers or shared pointers to the Edges
+   * @param Nodes passed by const ref
    *
    */
   template <typename T1, typename... Tn>
   std::enable_if_t<is_node_ptr_v<T1> && (is_node_ptr_v<Tn> && ...), void>
+  addNodes(T1 node, Tn... nodes);
+  /**
+   * \brief
+   * Function that adds any number of Nodes to the Graph Node set
+   *
+   * @param Raw pointers or shared pointers to the Nodes
+   *
+   */
+  template <typename T1, typename... Tn>
+  std::enable_if_t<is_node_v<T1> && (is_node_v<Tn> && ...), void>
   addNodes(T1 node, Tn... nodes);
   /**
    * \brief
