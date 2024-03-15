@@ -99,6 +99,11 @@ struct BellmanFordResult_struct {
 };
 typedef BellmanFordResult_struct BellmanFordResult;
 
+template <typename T>
+struct BronKerboschResult {
+  std::vector<std::unordered_set<shared<const Node<T>>>> maxCliques;
+};
+
 // implmentation is similar to boost hash_combine
 template <typename T>
 inline T hash_combine(T &lhs, const T &rhs) {

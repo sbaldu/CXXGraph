@@ -495,10 +495,10 @@ class Graph {
    */
   virtual const DijkstraResult dijkstra(const Node<T> &source,
                                         const Node<T> &target) const;
-  virtual const DijkstraResult dijkstra_deterministic(const Node<T> &source,
-                                        const Node<T> &target) const;
-  virtual const DijkstraResult dijkstra_deterministic2(const Node<T> &source,
-                                        const Node<T> &target) const;  
+  virtual const DijkstraResult dijkstra_deterministic(
+      const Node<T> &source, const Node<T> &target) const;
+  virtual const DijkstraResult dijkstra_deterministic2(
+      const Node<T> &source, const Node<T> &target) const;
   /**
    * @brief This function runs the tarjan algorithm and returns different types
    * of results depending on the input parameter typeMask.
@@ -529,6 +529,11 @@ class Graph {
    */
   virtual const BellmanFordResult bellmanford(const Node<T> &source,
                                               const Node<T> &target) const;
+  virtual const BronKerboschResult<T> BronKerbosch(
+      std::unordered_set<shared<const Node<T>>> P,
+      std::unordered_set<shared<const Node<T>>> R,
+      std::unordered_set<shared<const Node<T>>> X) const;
+  virtual const BronKerboschResult<T> BronKerbosch() const;
   /**
    * @brief This function computes the transitive reduction of the graph,
    * returning a graph with the property of transitive closure satisfied. It
@@ -801,15 +806,15 @@ class Graph {
                                       const Node<T> &target) const;
 
   /**
-    * @brief Welsh-Powell Coloring algorithm
-    * @return a std::map of keys being the nodes and the values being the color
-    * order (by integer) starting from 1.
-    * Source :
-    *          https://www.youtube.com/watch?v=SLkyDuG1Puw&ab_channel=TheLogicalLearning
-    *          https://www.geeksforgeeks.org/welsh-powell-graph-colouring-algorithm/
-    *          https://www.tutorialspoint.com/de-powell-graph-colouring-algorithm
+   * @brief Welsh-Powell Coloring algorithm
+   * @return a std::map of keys being the nodes and the values being the color
+   * order (by integer) starting from 1.
+   * Source :
+   *          https://www.youtube.com/watch?v=SLkyDuG1Puw&ab_channel=TheLogicalLearning
+   *          https://www.geeksforgeeks.org/welsh-powell-graph-colouring-algorithm/
+   *          https://www.tutorialspoint.com/de-powell-graph-colouring-algorithm
    */
-  virtual std::map<Node<T>, int> welshPowellColoring()  const;
+  virtual std::map<Node<T>, int> welshPowellColoring() const;
 
   /**
    * \brief
