@@ -24,6 +24,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include "CXXGraph/Edge/DirectedEdge.h"
 #include "CXXGraph/Edge/DirectedWeightedEdge.h"
@@ -110,6 +111,24 @@ struct all_are_edge_ptrs {
 
 template <typename T, typename... Ts>
 inline constexpr bool all_are_edge_ptrs_v = all_are_edge_ptrs<T, Ts...>::value;
+
+template <typename T>
+struct is_vector : std::false_type {};
+
+template <typename T>
+struct is_vector<std::vector<T>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_vector_v = is_vector<T>::value;
+
+template <typename T>
+struct is_nested_vector : std::false_type {};
+
+template <typename T>
+struct is_nested_vector<std::vector<std::vector<T>>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_nested_vector_v = is_nested_vector<T>::value;
 
 }  // namespace CXXGraph
 
