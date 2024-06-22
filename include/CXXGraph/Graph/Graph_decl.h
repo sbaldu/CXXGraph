@@ -345,6 +345,19 @@ class Graph {
   virtual shared<TransitionMatrix<T>> getTransitionMatrix() const;
 
   virtual void cacheTransitionMatrix();
+
+  template <template <typename t> typename Container>
+  Container<T> exportMatrix(const shared<AdjacencyMatrix<T>>& adj) const;
+
+  template <template <typename t> typename Container>
+  Container<T> exportMatrix(const shared<DegreeMatrix<T>>& deg) const;
+
+  template <template <typename t> typename Container>
+  Container<T> exportMatrix(const shared<LaplacianMatrix<T>>& lapl) const;
+
+  template <template <typename t> typename Container>
+  Container<T> exportMatrix(const shared<TransitionMatrix<T>>& tran) const;
+
   /**
    * \brief This function generates a set of nodes linked to the provided node
    * in a directed graph
