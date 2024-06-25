@@ -352,8 +352,8 @@ class Graph {
   template <template <typename t> typename Container>
   Container<T> exportMatrix(const shared<DegreeMatrix<T>>& deg) const;
 
-  template <template <typename t> typename Container>
-  Container<T> exportMatrix(const shared<LaplacianMatrix<T>>& lapl) const;
+  /* template <template <typename t> typename Container> */
+  /* Container<T> exportMatrix(const shared<LaplacianMatrix<T>>& lapl) const; */
 
   template <template <typename t> typename Container>
   Container<T> exportMatrix(const shared<TransitionMatrix<T>>& tran) const;
